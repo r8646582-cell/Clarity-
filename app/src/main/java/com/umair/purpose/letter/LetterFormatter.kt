@@ -59,7 +59,9 @@ object LetterFormatter {
     fun values(period: LetterPeriod, inputs: LetterInputs, zone: ZoneId): Map<String, String> {
         val m = inputs.memory
         val inPeriod = { ms: Long -> ContextFormatter.date(ms, zone) in period }
-        val sessions = inputs.sessions.filter { inPeriod(it.startedAt) }.sortedBy { it.startedAt }
+        // The writer already chose these with LetterPlanning.belongs, which also carries in a talk from the evening
+        // after the previous letter was written; filtering by date again here dropped that conversation.
+        val sessions = inputs.sessions.sortedBy { it.startedAt }
         val transcripts = sessions.associate { s -> s.id to ContextFormatter.transcript(inputs.messages[s.id].orEmpty()) }
         val withTalk = sessions.filter { s -> inputs.messages[s.id].orEmpty().any { it.role == Message.ROLE_USER } }
 

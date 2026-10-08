@@ -159,7 +159,7 @@ class ReflectionEngine @Inject constructor(
             mapOf(
                 "SESSION_DATE" to ReflectionPlanner.sessionDate(session, transcript, zone),
                 "CONTEXT" to ContextFormatter.reflectionContext(known, zone),
-                "DELETED_NOTES" to ContextFormatter.deletedNotes(known.notes),
+                "DELETED_NOTES" to ContextFormatter.deletedNotes(memory.snapshot().notes),
                 // A continued conversation: everything, with a marker after what was already learned from.
                 "TRANSCRIPT" to Conversations.transcriptWithMarker(transcript, reflectedUpTo) { ContextFormatter.transcriptLine(it, zone) },
             ),
