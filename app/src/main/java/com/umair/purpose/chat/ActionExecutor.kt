@@ -195,19 +195,9 @@ class ActionExecutor @Inject constructor(
         if (action.promiseId == null && action.title.isNullOrBlank()) return ActionReceipt("resolve_promise", ok = false, detail = "no_id")
         val resolved = promises.resolveFromTool(action.promiseId, action.title, normalizedStatus, now)
             ?: return ActionReceipt("resolve_promise", ok = false, detail = "not_open")
-        // UPDATE-22: a kept promise is real evidence. Feed it to the growth engine, exactly like the
-        // autonomous award_milestone action, so the tree starts sprouting the moment he keeps his word.
-        // Off-the-record doesn't feed the tree, but the promise itself still resolves above. A growth
-        // failure must never make a successful resolution look failed.
-        if (normalizedStatus == "KEPT" && !session.offTheRecord) {
-            try {
-                growth.recordEvidence("Promises", "Kept: ${action.title ?: "Promise"}", now)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                errors.log("growth", e)
-            }
-        }
+        // A kept promise is evidence, but it is counted by the growth engine's own stats (Evidence.actions) and judged
+        // by the weekly run. It does not create a leaf by itself: that bypassed the high-confidence rule and let
+        // trivial promises use up the three-a-month cap.
         return ActionReceipt("resolve_promise", ok = true, detail = normalizedStatus.lowercase(), promise = resolved)
     }
 

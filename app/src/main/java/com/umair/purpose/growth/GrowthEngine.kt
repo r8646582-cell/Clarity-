@@ -190,19 +190,19 @@ class GrowthEngine @Inject constructor(
 
     /** "Not yet": back in 30 days. */
     suspend fun snooze(id: Long, now: Long = System.currentTimeMillis()) {
-        val m = dao.get(id) ?: return
+        val m = dao.get(id)?.takeIf { it.status == Milestone.PROPOSED || it.status == Milestone.SNOOZED } ?: return
         dao.upsert(m.copy(status = Milestone.SNOOZED, decidedAt = now, snoozeUntil = MilestoneRules.snoozeUntil(now)))
     }
 
     /** "This isn't right": never proposed again. */
     suspend fun decline(id: Long, now: Long = System.currentTimeMillis()) {
-        val m = dao.get(id) ?: return
+        val m = dao.get(id)?.takeIf { it.status == Milestone.PROPOSED || it.status == Milestone.SNOOZED } ?: return
         dao.upsert(m.copy(status = Milestone.DECLINED, decidedAt = now))
     }
 
     /** Long-press → Remove: off the tree, and never proposed again. */
     suspend fun remove(id: Long, now: Long = System.currentTimeMillis()) {
-        val m = dao.get(id) ?: return
+        val m = dao.get(id)?.takeIf { it.status == Milestone.ACCEPTED } ?: return
         dao.upsert(m.copy(status = Milestone.REMOVED, decidedAt = now))
     }
 

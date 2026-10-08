@@ -271,8 +271,8 @@ class GrowthWorker(context: Context, params: WorkerParameters) : CoroutineWorker
         val ep = applicationContext.entryPoint()
         if (!ep.secrets().hasApiKey.value) return Result.success()
         return try {
+            // Not recorded as the weekly job's success: a run stopped by its guards would postpone the weekly one.
             ep.growth().run(trigger = com.umair.purpose.growth.GrowthEngine.Trigger.JOURNEY_DONE)
-            ep.uiPrefs().recordJob("milestones", ok = true)
             Result.success()
         } catch (e: Exception) {
             if (e !is CancellationException) ep.uiPrefs().recordJob("milestones", ok = false)
