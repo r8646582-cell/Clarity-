@@ -13,6 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from purpose_eval import RESULTS, bench, honesty, llm, memory_exam, results  # noqa: E402
+from purpose_eval import retrieval as R  # noqa: E402
 
 
 def cfg_from(args, prefix=""):
@@ -60,6 +61,9 @@ def main():
     ap.add_argument("--backup", default=None, help="honesty checks on this Export-my-life/backup JSON (default: the synthetic fixture)")
     ap.add_argument("--limit", type=int, default=0, help="only the first N scenarios / questions (smoke test)")
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--retriever", default="baseline", choices=["baseline", "hybrid"],
+                    help="hybrid = FTS + on-device MiniLM (needs: pip install onnxruntime numpy; model files from app assets)")
+    ap.add_argument("--min-similarity", type=float, default=None, help="hybrid only: cosine cut-off (app default 0.45)")
     ap.add_argument("--no-save", action="store_true")
     ap.add_argument("--out", default=None, help="write the result here instead of eval/results/<date>.json")
     args = ap.parse_args()
@@ -89,11 +93,15 @@ def main():
         log(f"bench: {len(scenarios)} scenarios on {coach.model}, judged by {judge.model}")
         sections["bench"] = bench.run(coach, judge, scenarios, args.workers,
                                       lambda r: log(f"  {'PASS' if r['pass'] else 'FAIL'}  {r['scenario']}"))
+    retriever_for_answers = None
+    if args.retriever == "hybrid" and only & {"retrieval", "answers"}:
+        retriever_for_answers = R.HybridRetriever(history, min_similarity=args.min_similarity)
     if "retrieval" in only:
-        sections["retrieval"] = memory_exam.retrieval_score(history, questions)
+        retriever = retriever_for_answers
+        sections["retrieval"] = memory_exam.retrieval_score(history, questions, retriever)
     if "answers" in only:
         log(f"memory answers: {len(questions)} questions")
-        sections["answers"] = memory_exam.answer_questions(coach, judge, history, questions, workers=args.workers,
+        sections["answers"] = memory_exam.answer_questions(coach, judge, history, questions, retriever=retriever_for_answers, workers=args.workers,
                                                            on_progress=lambda i, p: log(f"  {'PASS' if p else 'FAIL'}  {i}"))
     if "honesty" in only:
         data = json.loads(Path(args.backup).read_text(encoding="utf-8")) if args.backup else history

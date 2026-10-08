@@ -41,3 +41,15 @@ failing or passing, retrieval coverage changes. Commit results with the change t
   construction; their value is on a real export and as a regression guard (see `Honesty` tests for the failing cases).
 - LLM-judged numbers are noisy by a scenario or two. Treat a one-scenario flip as a prompt to read the reply, not as proof.
 - Memory exam gold answers depend on `fixtures/build_history.py`; regenerate with it and re-run, never edit `history.json` by hand.
+
+## Phase 2: comparing the hybrid retriever
+
+```
+python3 -m venv /tmp/v && /tmp/v/bin/pip install onnxruntime numpy
+/tmp/v/bin/python tools/eval/score.py --only retrieval,honesty --retriever hybrid [--min-similarity 0.30]
+```
+
+`--retriever hybrid` mirrors the app's `SearchIndex.relevant()` (full-text + MiniLM from `app/src/main/assets/embedding/`,
+reciprocal rank fusion, recency rerank). On the synthetic exam: retrieval coverage 70.8 (full-text only) -> 80.6 at the app's
+0.30 cut-off (83.3 at 0.20; it plateaus below 0.25). Saved as `eval/results/2026-10-08-hybrid-minilm.json`. The answers/bench
+sections use the same retriever when it is selected.

@@ -1,0 +1,513 @@
+{
+ "schema": 1,
+ "created_at": "2026-10-08T17:28:17+00:00",
+ "git_commit": "8bfaad4",
+ "git_dirty": true,
+ "prompts_sha": "92a24a8dc14d",
+ "fixtures_sha": "e05ad65cace2",
+ "config": {
+  "provider": "openai",
+  "model": "deepseek-flash",
+  "judge_model": "deepseek-flash",
+  "temperature": 0.7,
+  "retriever": "hybrid-fts4+minilm-v1"
+ },
+ "scores": {
+  "retrieval": 80.6,
+  "honesty": 100.0,
+  "overall": 90.3,
+  "overall_covers": [
+   "honesty",
+   "retrieval"
+  ]
+ },
+ "sections": {
+  "retrieval": {
+   "retriever": "hybrid-fts4+minilm-v1",
+   "questions": 36,
+   "mean_coverage": 0.8056,
+   "full_coverage_rate": 0.6389,
+   "archive_questions": 25,
+   "archive_mean_coverage": 0.7201,
+   "archive_full_coverage_rate": 0.48,
+   "by_kind": {
+    "recall": 0.7501,
+    "superseded": 0.7381,
+    "synthesis": 0.8334,
+    "time": 1.0
+   },
+   "per_question": [
+    {
+     "id": "r01",
+     "kind": "recall",
+     "coverage": 0.667,
+     "missing": [
+      "s:2"
+     ],
+     "retrieved": [
+      "e:1",
+      "n:7",
+      "p:employer_old",
+      "s:5"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r02",
+     "kind": "recall",
+     "coverage": 0.0,
+     "missing": [
+      "p:employer_old",
+      "s:9"
+     ],
+     "retrieved": [],
+     "needs_archive": true
+    },
+    {
+     "id": "r03",
+     "kind": "recall",
+     "coverage": 0.667,
+     "missing": [
+      "s:1"
+     ],
+     "retrieved": [
+      "p:city_old",
+      "s:10",
+      "s:13"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r04",
+     "kind": "recall",
+     "coverage": 0.5,
+     "missing": [
+      "s:8"
+     ],
+     "retrieved": [
+      "p:employer_old",
+      "s:7"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r05",
+     "kind": "recall",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:2",
+      "n:2",
+      "n:3",
+      "n:4",
+      "n:8",
+      "s:11",
+      "s:13",
+      "s:3"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r06",
+     "kind": "recall",
+     "coverage": 0.5,
+     "missing": [
+      "s:2"
+     ],
+     "retrieved": [
+      "q:1",
+      "q:4",
+      "q:5"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r07",
+     "kind": "recall",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:5",
+      "n:6",
+      "n:8",
+      "s:11",
+      "s:12",
+      "s:3"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r08",
+     "kind": "recall",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "s:1"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r09",
+     "kind": "recall",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "s:13",
+      "s:7",
+      "s:8"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r10",
+     "kind": "recall",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:3",
+      "s:5",
+      "s:6"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r11",
+     "kind": "recall",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:1",
+      "e:4",
+      "s:9"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r12",
+     "kind": "recall",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "s:1"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r13",
+     "kind": "recall",
+     "coverage": 0.667,
+     "missing": [
+      "s:6"
+     ],
+     "retrieved": [
+      "e:1",
+      "n:1",
+      "n:7",
+      "q:3",
+      "s:4"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r14",
+     "kind": "recall",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:4",
+      "q:4",
+      "s:7"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r15",
+     "kind": "recall",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:2",
+      "n:2",
+      "n:4",
+      "n:8",
+      "s:11",
+      "s:14",
+      "s:4"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "r16",
+     "kind": "recall",
+     "coverage": 0.0,
+     "missing": [
+      "s:1"
+     ],
+     "retrieved": [
+      "n:7"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "t01",
+     "kind": "time",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "n:4",
+      "q:3"
+     ],
+     "needs_archive": false
+    },
+    {
+     "id": "t02",
+     "kind": "time",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "n:4"
+     ],
+     "needs_archive": false
+    },
+    {
+     "id": "t03",
+     "kind": "time",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "n:4",
+      "q:4"
+     ],
+     "needs_archive": false
+    },
+    {
+     "id": "t04",
+     "kind": "time",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "s:13"
+     ],
+     "needs_archive": false
+    },
+    {
+     "id": "t05",
+     "kind": "time",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:4",
+      "n:4",
+      "s:7"
+     ],
+     "needs_archive": false
+    },
+    {
+     "id": "t06",
+     "kind": "time",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [],
+     "needs_archive": false
+    },
+    {
+     "id": "v01",
+     "kind": "synthesis",
+     "coverage": 0.667,
+     "missing": [
+      "s:4"
+     ],
+     "retrieved": [],
+     "needs_archive": true
+    },
+    {
+     "id": "v02",
+     "kind": "synthesis",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [],
+     "needs_archive": false
+    },
+    {
+     "id": "v03",
+     "kind": "synthesis",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "n:2"
+     ],
+     "needs_archive": false
+    },
+    {
+     "id": "v04",
+     "kind": "synthesis",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [],
+     "needs_archive": false
+    },
+    {
+     "id": "v05",
+     "kind": "synthesis",
+     "coverage": 0.667,
+     "missing": [
+      "s:8"
+     ],
+     "retrieved": [
+      "n:5",
+      "q:1",
+      "s:10"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "v06",
+     "kind": "synthesis",
+     "coverage": 0.5,
+     "missing": [
+      "s:9"
+     ],
+     "retrieved": [],
+     "needs_archive": true
+    },
+    {
+     "id": "v07",
+     "kind": "synthesis",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:5",
+      "n:6",
+      "s:11",
+      "s:12",
+      "s:3"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "u01",
+     "kind": "superseded",
+     "coverage": 0.667,
+     "missing": [
+      "s:9"
+     ],
+     "retrieved": [
+      "e:1",
+      "e:2",
+      "n:2",
+      "n:7",
+      "s:2",
+      "s:4"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "u02",
+     "kind": "superseded",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "p:city_old"
+     ],
+     "needs_archive": false
+    },
+    {
+     "id": "u03",
+     "kind": "superseded",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:2",
+      "n:8",
+      "s:11",
+      "s:3",
+      "s:4"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "u04",
+     "kind": "superseded",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "e:5",
+      "n:1",
+      "n:6",
+      "n:8",
+      "s:11",
+      "s:12",
+      "s:3"
+     ],
+     "needs_archive": false
+    },
+    {
+     "id": "u05",
+     "kind": "superseded",
+     "coverage": 1.0,
+     "missing": [],
+     "retrieved": [
+      "n:7",
+      "p:employer_old",
+      "s:10",
+      "s:2",
+      "s:9"
+     ],
+     "needs_archive": true
+    },
+    {
+     "id": "u06",
+     "kind": "superseded",
+     "coverage": 0.0,
+     "missing": [
+      "n:8",
+      "p:city_old",
+      "p:employer_old",
+      "s:3"
+     ],
+     "retrieved": [],
+     "needs_archive": true
+    },
+    {
+     "id": "u07",
+     "kind": "superseded",
+     "coverage": 0.5,
+     "missing": [
+      "s:8"
+     ],
+     "retrieved": [
+      "e:3",
+      "s:5"
+     ],
+     "needs_archive": true
+    }
+   ]
+  },
+  "honesty": {
+   "source": "fixtures/history.json (synthetic)",
+   "quotes": {
+    "total": 5,
+    "unverified": 0,
+    "verification_rate": 1.0,
+    "unverified_examples": []
+   },
+   "notes": {
+    "risen": 3,
+    "unsupported": 0,
+    "unknown_provenance": 0,
+    "overcounted_times_seen": 0,
+    "supported_rate": 1.0,
+    "unsupported_examples": []
+   },
+   "done_states": {
+    "total": 2,
+    "without_user_event": 0,
+    "kept_promises": 1,
+    "journey_days": 1,
+    "clean_rate": 1.0,
+    "examples": []
+   },
+   "score": 100.0
+  }
+ }
+}

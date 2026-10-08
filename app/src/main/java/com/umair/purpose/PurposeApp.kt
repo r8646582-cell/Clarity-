@@ -75,6 +75,8 @@ class PurposeApp : Application() {
             runCatching { onboarding.rescoreLegacyBigFive() }
             // All five conversations done but no snapshot (it failed, or the phone killed the job): write it now.
             runCatching { onboarding.state().takeIf { it.allTopicsDone && it.snapshot == null }?.let { work.writeSnapshot() } }
+            // Phase 2: last, so the optional embedding work never delays anything above.
+            runCatching { maintenance.prepareEmbeddings() }
         }
     }
 }

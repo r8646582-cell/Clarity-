@@ -38,6 +38,15 @@ class Maintenance @Inject constructor(
         if (search.isEmpty() && db.sessionDao().firstStartedAt() != null) search.rebuild()
     }
 
+    /**
+     * Phase 2: embeddings for any archive document that has none, and the model loaded before the first message
+     * needs it. Outside the writer lock on purpose: it is slow, optional, and a failure here costs nothing.
+     */
+    suspend fun prepareEmbeddings() {
+        search.syncEmbeddings()
+        search.warmUp()
+    }
+
     suspend fun monthly(now: Long = System.currentTimeMillis(), zone: ZoneId = ZoneId.systemDefault()) = db.datasetWork.withWriter { monthlyCurrentDataset(now, zone) }
 
     private suspend fun monthlyCurrentDataset(now: Long, zone: ZoneId) {

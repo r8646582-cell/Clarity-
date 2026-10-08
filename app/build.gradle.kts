@@ -56,6 +56,10 @@ android {
     buildFeatures {
         compose = true
     }
+    androidResources {
+        // The embedding model is read whole at start-up: stored uncompressed it loads without inflating 23 MB.
+        noCompress += "onnx"
+    }
 }
 
 ksp {

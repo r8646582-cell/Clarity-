@@ -166,3 +166,94 @@ def insights(notes):
     if not notes:
         return None
     return "RELEVANT INSIGHTS & REALIZATIONS:\n" + "\n".join(f"- {n['text']} [{n['confidence']}]" for n in notes[:MAX_RESULTS])
+
+
+# ---- Phase 2: hybrid retriever (mirror of RelevantMemories.rankHybrid + HybridRetrieval + EmbeddingIndex) -------------
+RRF_K, MIN_SIMILARITY, SEMANTIC_LIMIT, HALF_LIFE_DAYS = 60, 0.45, 10, 180.0
+
+
+def fuse(lists, k=RRF_K):
+    score = {}
+    for lst in lists:
+        seen = []
+        for x in lst:
+            if x not in seen:
+                seen.append(x)
+        for i, x in enumerate(seen):
+            score[x] = score.get(x, 0.0) + 1.0 / (k + i + 1)
+    return sorted(score.items(), key=lambda p: -p[1])  # stable: ties keep first-list order
+
+
+def rank_hybrid(lexical, semantic, ts, exclude_session, now_ms):
+    if not semantic:
+        return rank(lexical, ts, exclude_session)
+    import math
+    key = lambda h: f"{h.kind}|{h.ref}"
+    by = {}
+    lex = [h for h in rank_all(lexical, ts, exclude_session)]
+    for h in lex:
+        by.setdefault(key(h), h)
+    sem = []
+    for h, _ in semantic:
+        if exclude_session is not None and h.kind in ("summary", "quote", "event") and h.ref.split(":")[0] == str(exclude_session):
+            continue
+        by.setdefault(key(h), h)
+        sem.append(key(h))
+    fused = fuse([[key(h) for h in lex], sem])
+
+    def adj(item):
+        k, sc = item
+        try:
+            t = datetime.fromisoformat(by[k].day).replace(tzinfo=ZONE).timestamp() * 1000
+        except ValueError:
+            t = 0
+        age = max(0.0, (now_ms - t) / 86_400_000.0)
+        return sc * (1.0 + 0.15 * math.exp(-age * math.log(2) / HALF_LIFE_DAYS))
+    out, seen = [], set()
+    for k, _ in sorted(fused, key=adj, reverse=True):
+        h = by[k]
+        t = h.text.strip().lower()
+        if t not in seen:
+            seen.add(t)
+            out.append(h)
+    return out[:MAX_RESULTS]
+
+
+def rank_all(hits, ts, exclude_session=None):
+    """rank() without the MAX_RESULTS cut (Kotlin: rank(limit = Int.MAX_VALUE))."""
+    global MAX_RESULTS
+    keep, MAX_RESULTS = MAX_RESULTS, 10**9
+    try:
+        return rank(hits, ts, exclude_session)
+    finally:
+        MAX_RESULTS = keep
+
+
+class HybridRetriever(BaselineRetriever):
+    name = "hybrid-fts4+minilm-v1"
+
+    def __init__(self, data, embedder=None, now_ms=None, min_similarity=None):
+        super().__init__(data)
+        from . import embed
+        from .prompt import DEFAULT_NOW
+        self.emb = embedder or embed.Embedder()
+        self.now_ms = now_ms or DEFAULT_NOW.timestamp() * 1000
+        self.min_sim = MIN_SIMILARITY if min_similarity is None else min_similarity
+        self.docs = [Hit(*d) for d in search_docs(data)]
+        self.vecs = [self.emb.embed(d.text) for d in self.docs]
+
+    def retrieve(self, message: str, exclude_session=None):
+        ts = terms(message)
+        q = match_query(ts)
+        lexical = []
+        if q:
+            with self._lock:
+                rows = self.db.execute("SELECT kind, refId, day, text FROM search_doc WHERE search_doc MATCH ? ORDER BY day DESC, rowid DESC LIMIT ?",
+                                       (q, CANDIDATES)).fetchall()
+            lexical = [Hit(*r) for r in rows]
+        qv = self.emb.embed(message)
+        sims = sorted(((d, float(qv @ v)) for d, v in zip(self.docs, self.vecs)), key=lambda p: -p[1])
+        semantic = [(d, s) for d, s in sims if s >= self.min_sim][:SEMANTIC_LIMIT]
+        if not ts and not semantic:
+            return [], []
+        return rank_hybrid(lexical, semantic, ts, exclude_session, self.now_ms), rank_notes(self.data.get("notes", []), ts)

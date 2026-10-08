@@ -206,5 +206,28 @@ class OpenAiClient(unittest.TestCase):
         self.assertEqual(json.loads(out)["pass"], True)
 
 
+class HybridRetrievalMirror(unittest.TestCase):
+    """Mirrors HybridRetrievalTest / EmbeddingMathTest on the Kotlin side (no model needed)."""
+
+    def test_fuse_prefers_items_both_lists_return(self):
+        self.assertEqual(R.fuse([["a", "b", "c"], ["d", "b"]])[0][0], "b")
+
+    def test_fuse_with_empty_second_list_keeps_order(self):
+        self.assertEqual([k for k, _ in R.fuse([["x", "y", "z"], []])], ["x", "y", "z"])
+
+    def test_wordpiece_matches_the_kotlin_cases(self):
+        from purpose_eval.embed import WordPiece
+        v = ["[PAD]", "[UNK]", "[CLS]", "[SEP]", "hello", "world", "un", "##want", "##ed", "cafe", ",", "!", "a"]
+        t = WordPiece(v)
+        self.assertEqual(t.encode("Hello WORLD"), [2, 4, 5, 3])
+        self.assertEqual(t.encode("hello, world!"), [2, 4, 10, 5, 11, 3])
+        self.assertEqual(t.encode("Caf\u00e9"), [2, 9, 3])
+        self.assertEqual(t.encode("unwanted"), [2, 6, 7, 8, 3])
+        self.assertEqual(t.encode("zzz"), [2, 1, 3])
+        self.assertEqual(t.encode("   "), [2, 3])
+        ids = WordPiece(v, max_len=8).encode("a " * 50)
+        self.assertEqual((len(ids), ids[0], ids[-1]), (8, 2, 3))
+
+
 if __name__ == "__main__":
     unittest.main()

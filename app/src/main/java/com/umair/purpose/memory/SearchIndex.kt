@@ -28,6 +28,9 @@ class SearchIndex @Inject constructor(
     }
 
     /** Embeds new documents; never throws and never blocks anything that matters. */
+    /** Loads the embedding model in the background; harmless without one. */
+    suspend fun warmUp() { runCatching { embeddings?.warmUp() } }
+
     suspend fun syncEmbeddings() { runCatching { embeddings?.sync() } }
 
     private suspend fun rebuildDocs(zone: ZoneId) = db.withTransaction {
