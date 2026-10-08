@@ -22,8 +22,10 @@ import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
         Disagreement::class, Contradiction::class, ActionLog::class,
         // Phase 4
         ScreenUsage::class,
+        // Phase 5
+        JobModel::class,
     ],
-    version = 14,
+    version = 15,
     exportSchema = true,
 )
 abstract class PurposeDatabase : RoomDatabase() {
@@ -63,6 +65,7 @@ abstract class PurposeDatabase : RoomDatabase() {
     abstract fun contradictionDao(): ContradictionDao
     abstract fun actionLogDao(): ActionLogDao
     abstract fun screenUsageDao(): ScreenUsageDao
+    abstract fun jobModelDao(): JobModelDao
 
     companion object {
         /**

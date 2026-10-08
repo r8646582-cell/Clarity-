@@ -53,3 +53,18 @@ python3 -m venv /tmp/v && /tmp/v/bin/pip install onnxruntime numpy
 reciprocal rank fusion, recency rerank). On the synthetic exam: retrieval coverage 70.8 (full-text only) -> 80.6 at the app's
 0.30 cut-off (83.3 at 0.20; it plateaus below 0.25). Saved as `eval/results/2026-10-08-hybrid-minilm.json`. The answers/bench
 sections use the same retriever when it is selected.
+
+## Phase 5: comparing models for the slow jobs
+
+The slow jobs (reflection, letters, chapters, gardening, snapshot) can now use their own model (Settings > Advanced >
+Models for slow jobs). The default stays "same as before" until the scoreboard shows a stronger model helps. To test one:
+
+```
+export PURPOSE_EVAL_API_KEY=...            # the model under test
+python3 tools/eval/score.py --provider anthropic --model <strong-model> --judge-model <fixed-judge> --out eval/results/<date>-<model>.json
+python3 tools/eval/score.py diff eval/results/<baseline>.json eval/results/<date>-<model>.json
+```
+
+Keep the judge the same across runs (`--judge-provider/--judge-model`), or the numbers are not comparable. The bench and
+answers sections grade the *coach* model, so they are the closest proxy here; reflection and letter quality are not yet
+scored directly (see PHASE5 notes in CHANGES-v2.md). Commit the result files with the change of default.

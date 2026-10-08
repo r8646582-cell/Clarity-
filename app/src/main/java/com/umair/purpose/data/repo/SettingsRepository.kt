@@ -66,18 +66,48 @@ data class AppSettings(
     val lastRestoreTestAt: Long? = null,
     val keystoreConfirmedAt: Long? = null,
     val providerKeyExpiry: String? = null,
+    /** Phase 5: the model chosen for each slow job. A job with no entry uses the default. */
+    val jobModels: Map<com.umair.purpose.ai.AiJob, com.umair.purpose.ai.JobModelChoice> = emptyMap(),
 ) {
+    /** The model (and provider route) a slow job's request should use. */
+    fun jobModel(job: com.umair.purpose.ai.AiJob): com.umair.purpose.ai.ResolvedModel =
+        com.umair.purpose.ai.JobModels.resolve(jobModels[job] ?: com.umair.purpose.ai.JobModelChoice(), ai, backupProvider)
+
     val pricing: com.umair.purpose.cost.Pricing
-        get() = com.umair.purpose.cost.Pricing(ai.chatModel, chatPrices, ai.deepModel, deepPrices, if (offPeak.enabled) offPeak.factor else 1.0)
+        get() = com.umair.purpose.cost.Pricing(
+            ai.chatModel, chatPrices, ai.deepModel, deepPrices, if (offPeak.enabled) offPeak.factor else 1.0,
+            extra = com.umair.purpose.ai.AiJob.entries.mapNotNull { j -> jobModel(j).let { r -> r.prices?.let { r.model to it } } }.toMap(),
+        )
 }
 
 @Singleton
 class SettingsRepository @Inject constructor(private val db: PurposeDatabase) {
     private val dao = db.settingsDao()
 
-    fun observe(): Flow<AppSettings> = dao.observe().map { it.toModel() }
+    fun observe(): Flow<AppSettings> =
+        kotlinx.coroutines.flow.combine(dao.observe(), db.jobModelDao().observeAll()) { s, jobs -> s.toModel().copy(jobModels = jobs.toChoices()) }
 
-    suspend fun get(): AppSettings = dao.get().toModel()
+    suspend fun get(): AppSettings = dao.get().toModel().copy(jobModels = db.jobModelDao().all().toChoices())
+
+    /** Phase 5: saves one job's model. The default is stored as no row at all. */
+    suspend fun setJobModel(job: com.umair.purpose.ai.AiJob, choice: com.umair.purpose.ai.JobModelChoice) {
+        if (choice == com.umair.purpose.ai.JobModelChoice()) db.jobModelDao().delete(job.wire)
+        else db.jobModelDao().upsert(
+            com.umair.purpose.data.db.JobModel(
+                job.wire, choice.source.wire, choice.customModel.trim(),
+                choice.prices.cacheHit, choice.prices.cacheMiss, choice.prices.output,
+            )
+        )
+    }
+
+    private fun List<com.umair.purpose.data.db.JobModel>.toChoices(): Map<com.umair.purpose.ai.AiJob, com.umair.purpose.ai.JobModelChoice> =
+        mapNotNull { r ->
+            com.umair.purpose.ai.AiJob.fromWire(r.job)?.let {
+                it to com.umair.purpose.ai.JobModelChoice(
+                    com.umair.purpose.ai.ModelSource.fromWire(r.source), r.customModel, Prices(r.priceCacheHit, r.priceCacheMiss, r.priceOutput),
+                )
+            }
+        }.toMap()
 
     suspend fun update(transform: (AppSettings) -> AppSettings) {
         db.withTransaction { dao.upsert(transform(get()).toEntity()) }

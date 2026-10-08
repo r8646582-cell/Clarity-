@@ -87,6 +87,11 @@ class FailoverAiClient(
 ) : AiClient {
     override fun chat(request: AiRequest): Flow<ChatChunk> = flow {
         val b = backup()
+        if (request.useBackup) {
+            val (client, _) = b ?: throw AiException("Backup provider not set")
+            client.chat(request.copy(thinking = false)).collect { emit(it) }
+            return@flow
+        }
         if (b == null) policy.backupGone()
         if (b == null || policy.tryMainFirst()) {
             var shown = false
@@ -110,6 +115,12 @@ class FailoverAiClient(
 
     override suspend fun complete(request: AiRequest): Completion {
         val b = backup()
+        // Phase 5: a job he pointed at the backup provider's model goes there directly. The main provider's
+        // failure bookkeeping is untouched, and thinking is off (not every API has it).
+        if (request.useBackup) {
+            val (client, _) = b ?: throw AiException("Backup provider not set")
+            return client.complete(request.copy(thinking = false))
+        }
         if (b == null) policy.backupGone()
         if (b == null || policy.tryMainFirst()) {
             try {

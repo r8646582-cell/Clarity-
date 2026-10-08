@@ -54,9 +54,12 @@ class SnapshotWriter @Inject constructor(
                 "TRANSCRIPTS" to transcripts.joinToString("\n\n=====\n\n").ifEmpty { "(none)" },
             ),
         )
-        val cfg = settings.get().ai
+        val appSettings = settings.get()
+        val cfg = appSettings.ai
+        val jobModel = appSettings.jobModel(com.umair.purpose.ai.AiJob.SNAPSHOT)
         val request = AiRequest(
-            model = cfg.deepModel,
+            model = jobModel.model,
+            useBackup = jobModel.useBackup,
             messages = listOf(AiMessage(Role.SYSTEM, prompt), AiMessage(Role.USER, "Write the snapshot now.")),
             temperature = cfg.chatTemperature,
             thinking = true,

@@ -28,7 +28,7 @@ import java.sql.ResultSet
  */
 class MigrationTest {
     private val dir = File("schemas/com.umair.purpose.data.db.PurposeDatabase")
-    private val latest = 14
+    private val latest = 15
     private val conns = mutableListOf<Connection>()
 
     @After
@@ -130,6 +130,16 @@ class MigrationTest {
         assertSchema(db, schema(14), "13 → 14")
         assertEquals("Walk 20 minutes", one(db, "SELECT text FROM promise WHERE id = 1"))
         assertEquals("0", one(db, "SELECT COUNT(*) FROM screen_usage"))
+    }
+
+    @Test
+    fun `14 to 15 adds the empty job model table and keeps his data`() {
+        val db = create(14)
+        exec(db, "INSERT INTO session (id, startedAt, reflected, userMessageCount, titleByUser) VALUES (1, 100, 1, 2, 0)")
+        migrate(db, 14, 15)
+        assertSchema(db, schema(15), "14 → 15")
+        assertEquals("0", one(db, "SELECT COUNT(*) FROM job_model"))
+        assertEquals("1", one(db, "SELECT COUNT(*) FROM session"))
     }
 
     @Test

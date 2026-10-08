@@ -75,6 +75,8 @@ data class BackupData(
     val actionLog: List<com.umair.purpose.data.db.ActionLog> = emptyList(),
     /** Phase 4 opt-in screen time. An older backup simply has none. */
     val screenUsage: List<com.umair.purpose.data.db.ScreenUsage> = emptyList(),
+    /** Phase 5 per-job model choices. */
+    val jobModels: List<com.umair.purpose.data.db.JobModel> = emptyList(),
     /** Format 1 only. */
     val reports: List<LegacyReport> = emptyList(),
 ) {

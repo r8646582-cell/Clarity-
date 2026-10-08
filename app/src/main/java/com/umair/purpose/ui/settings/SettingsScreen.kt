@@ -144,6 +144,7 @@ fun SettingsScreen(
                             SwitchRow("Always use the deep model", s.alwaysDeep, vm::setAlwaysDeep, "Slower and costs more, but every reply thinks first.")
                         }
                         key(s.chatPrices, s.deepPrices) { PricesSection(s.chatPrices, s.deepPrices) { c, d -> vm.savePrices(c, d); snackbar("Saved") } }
+                        JobModelsSection()
                         Section("Voice language") {
                             Segmented(VoiceLanguage.entries.map { it to it.label }, s.voiceLanguage, vm::setVoiceLanguage)
                             Meta("Voice typing uses your phone's speech service.")

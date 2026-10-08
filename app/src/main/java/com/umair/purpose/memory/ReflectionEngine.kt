@@ -164,9 +164,12 @@ class ReflectionEngine @Inject constructor(
                 "TRANSCRIPT" to Conversations.transcriptWithMarker(transcript, reflectedUpTo) { ContextFormatter.transcriptLine(it, zone) },
             ),
         )
-        val cfg = settings.get().ai
+        val appSettings = settings.get()
+        val cfg = appSettings.ai
+        val jobModel = appSettings.jobModel(com.umair.purpose.ai.AiJob.REFLECTION)
         val request = AiRequest(
-            model = cfg.deepModel,
+            model = jobModel.model,
+            useBackup = jobModel.useBackup,
             messages = listOf(AiMessage(Role.SYSTEM, prompt), AiMessage(Role.USER, ASK)),
             temperature = cfg.reflectionTemperature,
             // JSON mode is the priority here; thinking stays off so the two never conflict.

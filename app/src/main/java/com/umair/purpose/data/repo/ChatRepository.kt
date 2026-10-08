@@ -333,6 +333,7 @@ class ChatRepository @Inject constructor(
             db.journeyAdjustmentDao().clear(); db.usageMonthDao().clear()
             db.disagreementDao().clear(); db.contradictionDao().clear(); db.actionLogDao().clear()
             db.screenUsageDao().clear()
+            db.jobModelDao().clear()
             db.searchDao().clear()
             db.errorDao().clear()
             // His saved prompt files are his data too, and "Erase everything" says all of it goes.

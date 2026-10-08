@@ -36,11 +36,13 @@ data class Pricing(
     val deepModel: String,
     val deep: Prices,
     val offPeakFactor: Double = 1.0,
+    /** Phase 5: prices he entered for other models (the backup's, or a custom one) used by a slow job. */
+    val extra: Map<String, Prices> = emptyMap(),
 ) {
     fun forModel(model: String): Prices? = when (model) {
         chatModel -> chat
         deepModel -> deep
-        else -> null
+        else -> extra[model]
     }
 }
 

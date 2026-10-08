@@ -100,9 +100,12 @@ class LetterWriter @Inject constructor(
             },
         )
         val prompt = if (period.kind == Letter.WEEKLY) "letter_weekly.md" else "letter_monthly.md"
-        val cfg = settings.get().ai
+        val appSettings = settings.get()
+        val cfg = appSettings.ai
+        val jobModel = appSettings.jobModel(com.umair.purpose.ai.AiJob.LETTERS)
         val request = AiRequest(
-            model = cfg.deepModel,
+            model = jobModel.model,
+            useBackup = jobModel.useBackup,
             messages = listOf(
                 AiMessage(Role.SYSTEM, Templates.fill(prompts.load(prompt), LetterFormatter.values(period, inputs, zone))),
                 AiMessage(Role.USER, "Write the letter now."),

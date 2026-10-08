@@ -73,9 +73,12 @@ class ChapterWriter @Inject constructor(
             "PROMISES" to ContextFormatter.resolvedLines(promises, limit = 60).joinToString("\n").ifEmpty { "(none)" },
             "NOTES" to notes.joinToString("\n") { "- [${it.type}, ${it.confidence}, seen ${it.timesSeen}x] ${it.text}" }.ifEmpty { "(none)" },
         )
-        val cfg = settings.get().ai
+        val appSettings = settings.get()
+        val cfg = appSettings.ai
+        val jobModel = appSettings.jobModel(com.umair.purpose.ai.AiJob.CHAPTER)
         val request = AiRequest(
-            model = cfg.deepModel,
+            model = jobModel.model,
+            useBackup = jobModel.useBackup,
             messages = listOf(
                 AiMessage(Role.SYSTEM, Templates.fill(prompts.load("chapter.md"), values)),
                 AiMessage(Role.USER, "Write the chapter now."),

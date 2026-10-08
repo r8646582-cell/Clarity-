@@ -39,9 +39,12 @@ class Gardener @Inject constructor(
         ) return
         val since = LocalDate.now(zone).minusMonths(3).atStartOfDay(zone).toInstant().toEpochMilli()
         val sessions = db.sessionDao().all().filter { it.startedAt >= since }
-        val cfg = settings.get().ai
+        val appSettings = settings.get()
+        val cfg = appSettings.ai
+        val jobModel = appSettings.jobModel(com.umair.purpose.ai.AiJob.GARDENING)
         val request = AiRequest(
-            model = cfg.deepModel,
+            model = jobModel.model,
+            useBackup = jobModel.useBackup,
             messages = listOf(
                 AiMessage(
                     Role.SYSTEM,

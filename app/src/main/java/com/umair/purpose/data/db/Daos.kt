@@ -831,3 +831,14 @@ interface ScreenUsageDao {
     @Query("DELETE FROM screen_usage WHERE date < :oldest") suspend fun pruneBefore(oldest: String)
     @Query("DELETE FROM screen_usage") suspend fun clear()
 }
+
+/** Phase 5: the model chosen for each slow job. */
+@Dao
+interface JobModelDao {
+    @Upsert suspend fun upsert(row: JobModel)
+    @Upsert suspend fun upsertAll(rows: List<JobModel>)
+    @Query("SELECT * FROM job_model") fun observeAll(): Flow<List<JobModel>>
+    @Query("SELECT * FROM job_model ORDER BY job") suspend fun all(): List<JobModel>
+    @Query("DELETE FROM job_model WHERE job = :job") suspend fun delete(job: String)
+    @Query("DELETE FROM job_model") suspend fun clear()
+}

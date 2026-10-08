@@ -29,6 +29,8 @@ data class AiRequest(
      * prefix automatically (DeepSeek) ignore this. See ChatPromptBuilder.stableCount.
      */
     val cachePrefixMessages: Int = 0,
+    /** Phase 5: send this straight to the backup provider (its own model name in [model]), not the main one. */
+    val useBackup: Boolean = false,
 )
 
 data class TokenUsage(

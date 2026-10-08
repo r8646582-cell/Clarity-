@@ -704,3 +704,18 @@ data class ScreenUsage(
     val category: String,
     val minutes: Int,
 )
+
+/**
+ * Phase 5: which model a slow job uses. No row for a job means the default (the main provider's deep model, as
+ * before). Prices are USD per 1M tokens, 0 = not known.
+ */
+@Serializable
+@Entity(tableName = "job_model")
+data class JobModel(
+    @PrimaryKey val job: String,
+    val source: String,
+    val customModel: String,
+    val priceCacheHit: Double,
+    val priceCacheMiss: Double,
+    val priceOutput: Double,
+)
