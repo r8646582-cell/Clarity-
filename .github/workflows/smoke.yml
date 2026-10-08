@@ -7,13 +7,10 @@ on:
     inputs:
       old_tag:
         description: "Release to install first (empty = fresh install only)"
-        default: "v1.1.0"
+        default: ""
       new_tag:
         description: "Release to test"
-        default: "v1.2.0"
-  push:
-    branches: [ccr-2af2145f-kdczgr]
-    paths: [.github/workflows/smoke.yml]
+        default: "v1.3.1"
 
 jobs:
   smoke:
@@ -21,8 +18,8 @@ jobs:
     timeout-minutes: 40
     env:
       GH_TOKEN: ${{ github.token }}
-      OLD_TAG: ${{ inputs.old_tag || 'v1.1.0' }}
-      NEW_TAG: ${{ inputs.new_tag || 'v1.2.0' }}
+      OLD_TAG: ${{ inputs.old_tag }}
+      NEW_TAG: ${{ inputs.new_tag || 'v1.3.1' }}
     steps:
       - uses: actions/checkout@v4
       - name: Download APKs

@@ -94,8 +94,8 @@ interface SessionDao {
     /** Titles and message text, locally. */
     @Query(
         """SELECT session.*, COALESCE((SELECT MAX(createdAt) FROM message WHERE sessionId = session.id), startedAt) AS lastAt
-           FROM session WHERE userMessageCount > 0 AND (title LIKE '%' || :q || '%'
-             OR id IN (SELECT sessionId FROM message WHERE content LIKE '%' || :q || '%'))
+           FROM session WHERE userMessageCount > 0 AND (title LIKE '%' || :q || '%' ESCAPE '\'
+             OR id IN (SELECT sessionId FROM message WHERE content LIKE '%' || :q || '%' ESCAPE '\'))
            ORDER BY lastAt DESC"""
     )
     fun searchConversations(q: String): Flow<List<ConversationRow>>
@@ -106,8 +106,8 @@ interface SessionDao {
     /** UPDATE-15: the drawer as pages; [q] blank = every conversation, else titles and message text. */
     @Query(
         """SELECT session.*, COALESCE((SELECT MAX(createdAt) FROM message WHERE sessionId = session.id), startedAt) AS lastAt
-           FROM session WHERE userMessageCount > 0 AND (:q = '' OR title LIKE '%' || :q || '%'
-             OR id IN (SELECT sessionId FROM message WHERE content LIKE '%' || :q || '%'))
+           FROM session WHERE userMessageCount > 0 AND (:q = '' OR title LIKE '%' || :q || '%' ESCAPE '\'
+             OR id IN (SELECT sessionId FROM message WHERE content LIKE '%' || :q || '%' ESCAPE '\'))
            ORDER BY lastAt DESC"""
     )
     fun pagedConversations(q: String): androidx.paging.PagingSource<Int, ConversationRow>

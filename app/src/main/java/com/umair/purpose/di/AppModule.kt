@@ -28,7 +28,7 @@ object AppModule {
     fun database(@ApplicationContext context: Context, secrets: SecretStore,
         prefs: com.umair.purpose.data.repo.UiPrefs, receipts: com.umair.purpose.chat.ActionReceiptStore,
         offRecord: com.umair.purpose.data.repo.OffRecord): PurposeDatabase =
-        PurposeDatabase.open(context, secrets.dbPassphrase()).also { db ->
+        PurposeDatabase.open(context) { secrets.dbPassphrase() }.also { db ->
             db.datasetWork.onReplaced { prefs.datasetReplaced(); receipts.clear(); offRecord.end() }
         }
 

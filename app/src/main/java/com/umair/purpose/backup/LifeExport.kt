@@ -57,9 +57,11 @@ object LifeExport {
         val notes = data.notes.filter { it.status == Note.ACTIVE || it.status == Note.RETIRED || it.status == Note.RESOLVED }
         if (notes.isNotEmpty()) {
             h(2, "What Purpose learned about me")
-            listOf("pattern" to "How I work", "what_helps" to "What works for me", "what_doesnt" to "What doesn't", "thread" to "Still on my mind")
+            val known = listOf("pattern" to "How I work", "what_helps" to "What works for me", "what_doesnt" to "What doesn't", "thread" to "Still on my mind")
+            // A note with a type this list does not know is still his: it goes under "Other", never silently dropped.
+            (known + ("" to "Other"))
                 .forEach { (type, title) ->
-                    val group = notes.filter { it.type == type }.sortedBy { it.firstSeen }
+                    val group = notes.filter { if (type.isEmpty()) known.none { k -> k.first == it.type } else it.type == type }.sortedBy { it.firstSeen }
                     if (group.isEmpty()) return@forEach
                     h(3, title)
                     group.forEach { n ->
@@ -91,7 +93,39 @@ object LifeExport {
                 line("")
             }
         }
-        val promises = data.promises.sortedBy { it.createdAt }
+        val areas = data.areas.filter { it.status.isNotBlank() }.sortedBy { it.area }
+        if (areas.isNotEmpty()) {
+            h(2, "Where I am in each part of life")
+            areas.forEach { a -> line("- **${a.area.replace('_', ' ')}**: ${a.status}" + (a.note?.takeIf { it.isNotBlank() }?.let { " (${it.trim()})" } ?: "")) }
+            line("")
+        }
+        if (data.quotes.isNotEmpty()) {
+            h(2, "Things I said that mattered")
+            data.quotes.sortedBy { it.createdAt }.forEach { line("- ${day(it.createdAt)}: \"${it.text.trim()}\"") }
+            line("")
+        }
+        if (data.behaviorEvents.any { !it.deletedByUser }) {
+            h(2, "Moments Purpose noticed")
+            data.behaviorEvents.filter { !it.deletedByUser }.sortedBy { it.createdAt }.forEach { e ->
+                val parts = listOfNotNull(e.situation, e.feelingBefore?.let { "felt $it" }, e.action?.let { "did $it" }, e.payoff?.let { "payoff $it" }, e.outcome?.let { "outcome $it" })
+                    .filter { it.isNotBlank() }
+                line("- ${day(e.createdAt)}" + (e.whenText?.takeIf { it.isNotBlank() }?.let { " ($it)" } ?: "") + ": " + parts.joinToString("; "))
+            }
+            line("")
+        }
+        if (data.journeys.isNotEmpty()) {
+            h(2, "Journeys")
+            data.journeys.sortedBy { it.startedAt }.forEach { j -> line("- ${j.name} (started ${day(j.startedAt)}, ${j.status}, day ${j.currentDay} of ${j.totalDays})") }
+            line("")
+        }
+        if (data.disagreements.isNotEmpty() || data.contradictions.isNotEmpty()) {
+            h(2, "Where Purpose and I disagreed, and what didn't fit")
+            data.disagreements.sortedBy { it.raisedAt }.forEach { line("- ${day(it.raisedAt)}: Purpose said \"${it.claim}\"; I said \"${it.hisPosition}\"") }
+            data.contradictions.sortedBy { it.statedAtB }.forEach { line("- \"${it.quoteA}\" (${day(it.statedAtA)}) versus \"${it.quoteB}\" (${day(it.statedAtB)})") }
+            line("")
+        }
+        // Promises made off the record are not remembered, so they are not exported as part of his life either.
+        val promises = data.promises.filter { !it.offTheRecord }.sortedBy { it.createdAt }
         if (promises.isNotEmpty()) {
             h(2, "Promises")
             promises.forEach { p ->

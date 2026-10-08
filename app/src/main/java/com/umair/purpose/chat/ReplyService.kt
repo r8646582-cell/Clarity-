@@ -86,6 +86,14 @@ class ReplyService : Service() {
                 ContextCompat.startForegroundService(context, Intent(context, ReplyService::class.java))
             }.onFailure { e ->
                 Log.w(TAG, "Failed to start ReplyService foreground: ${e.message}", e)
+                // Typically a queued message answered while the app is in the background: the reply still runs, but
+                // unprotected, so it belongs in the error log (type only, never content).
+                runCatching {
+                    val app = context.applicationContext
+                    serviceScope.launch {
+                        runCatching { EntryPointAccessors.fromApplication(app, ReplyServiceEntryPoint::class.java).errors().log("reply-service", e) }
+                    }
+                }
             }
         }
 

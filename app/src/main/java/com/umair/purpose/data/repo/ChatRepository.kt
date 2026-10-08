@@ -177,13 +177,13 @@ class ChatRepository @Inject constructor(
 
     /** UPDATE-15: the drawer a page at a time, so years of conversations open instantly. */
     fun pagedConversations(query: String): Flow<androidx.paging.PagingData<Conversation>> =
-        androidx.paging.Pager(androidx.paging.PagingConfig(pageSize = 40, enablePlaceholders = false)) { sessions.pagedConversations(query.trim()) }
+        androidx.paging.Pager(androidx.paging.PagingConfig(pageSize = 40, enablePlaceholders = false)) { sessions.pagedConversations(likeEscape(query.trim())) }
             .flow.map { pd -> pd.map { Conversation(it.session, it.lastAt) } }
 
     /** The drawer: every conversation he took part in, newest activity first. Blank [query] = all. */
     fun observeConversations(query: String): Flow<List<Conversation>> {
         val q = query.trim()
-        val rows = if (q.isEmpty()) sessions.observeConversations() else sessions.searchConversations(q)
+        val rows = if (q.isEmpty()) sessions.observeConversations() else sessions.searchConversations(likeEscape(q))
         return rows.map { list -> list.map { Conversation(it.session, it.lastAt) } }
     }
 
@@ -357,6 +357,9 @@ class ChatRepository @Inject constructor(
     }
 
     companion object {
+        /** `%`, `_` and `\` typed in the search box mean themselves, not "anything" (the queries use ESCAPE '\'). */
+        internal fun likeEscape(q: String): String = q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
         /**
          * How many conversations Talk's home reads to find "Pick up where you left off". One row is shown, but a
          * few are read because mode and letter conversations are skipped.

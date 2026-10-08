@@ -177,16 +177,20 @@ class ReminderReceiver : BroadcastReceiver() {
                 val db = EntryPointAccessors.fromApplication(app, ReminderEntryPoint::class.java).database()
                 val p = db.promiseDao().get(id)
                 if (p != null && p.status == Promise.OPEN && p.remindAt != null) {
+                    var shown = false
                     if (ReminderScheduler.canNotify(app)) {
                         ReminderScheduler.ensureChannel(app)
                         val n = reminderNotification(app, "It's time: ${p.text}")
                         try {
                             NotificationManagerCompat.from(app).notify(id.toInt(), n)
+                            shown = true
                         } catch (_: SecurityException) {
                         }
                     }
-                    // Done: a reboot won't bring it back, and one still set later on means it was missed.
-                    db.promiseDao().clearReminder(id)
+                    // Done once it was really shown: a reboot won't bring it back, and one still set later on means
+                    // it was missed. If notifications are off it stays, so allowing them later (or a reboot while
+                    // it is still recent) can still show it instead of it vanishing unseen.
+                    if (shown) db.promiseDao().clearReminder(id)
                 }
             } finally {
                 result.finish()

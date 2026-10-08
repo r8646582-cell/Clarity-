@@ -101,6 +101,12 @@ jobs:
           elif [ -n "$RELEASE_TAG" ]; then TAG="$RELEASE_TAG"
           elif [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$GITHUB_REF_NAME" = "main" ]; then TAG="v${{ steps.apk.outputs.version }}"
           else TAG="build-${GITHUB_RUN_NUMBER}"; fi
+          # A release for this version may already exist (a dependency edit on main, or a tag pushed after the
+          # version-bump merge already made it): add this build to it instead of failing the run.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${{ steps.apk.outputs.name }}" --clobber
+            exit 0
+          fi
           gh release create "$TAG" "${{ steps.apk.outputs.name }}" \
             --target "$GITHUB_SHA" \
             --title "Purpose ${{ steps.apk.outputs.version }} (build ${GITHUB_RUN_NUMBER})" \

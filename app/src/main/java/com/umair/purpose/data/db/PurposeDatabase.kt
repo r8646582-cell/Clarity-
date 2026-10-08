@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.db.SupportSQLiteOpenHelper
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 
 @Database(
@@ -74,13 +76,46 @@ abstract class PurposeDatabase : RoomDatabase() {
          */
         val MIGRATIONS: Array<Migration> get() = Migrations.ALL
 
-        /** Opens the SQLCipher-encrypted database. Schema changes need real migrations: this is his life's data. */
-        fun open(context: Context, passphrase: ByteArray): PurposeDatabase {
-            System.loadLibrary("sqlcipher")
-            return Room.databaseBuilder(context, PurposeDatabase::class.java, "purpose.db")
-                .openHelperFactory(SupportOpenHelperFactory(passphrase))
+        /**
+         * Builds the SQLCipher-encrypted database. Nothing secret is read here: the key and the native library are
+         * touched on the first real open, which [DatabaseGate] wraps. A lost Keystore key then shows the error
+         * screen instead of crashing every launch before the app can say anything.
+         */
+        fun open(context: Context, passphrase: () -> ByteArray): PurposeDatabase =
+            Room.databaseBuilder(context, PurposeDatabase::class.java, "purpose.db")
+                .openHelperFactory(LazySqlCipherFactory(passphrase))
                 .addMigrations(*MIGRATIONS)
                 .build()
-        }
+    }
+}
+
+/** Creates the real SQLCipher helper only when the database is first used (see [PurposeDatabase.open]). */
+private class LazySqlCipherFactory(private val passphrase: () -> ByteArray) : SupportSQLiteOpenHelper.Factory {
+    override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper = LazyHelper(configuration) {
+        System.loadLibrary("sqlcipher")
+        SupportOpenHelperFactory(passphrase()).create(configuration)
+    }
+}
+
+private class LazyHelper(
+    configuration: SupportSQLiteOpenHelper.Configuration,
+    private val make: () -> SupportSQLiteOpenHelper,
+) : SupportSQLiteOpenHelper {
+    override val databaseName: String? = configuration.name
+    private var wal: Boolean? = null
+    private val real: SupportSQLiteOpenHelper by lazy { make().also { h -> wal?.let(h::setWriteAheadLoggingEnabled) } }
+    private val created = java.util.concurrent.atomic.AtomicBoolean(false)
+
+    private fun helper(): SupportSQLiteOpenHelper = real.also { created.set(true) }
+
+    override fun setWriteAheadLoggingEnabled(enabled: Boolean) {
+        if (created.get()) real.setWriteAheadLoggingEnabled(enabled) else wal = enabled
+    }
+
+    override val writableDatabase: SupportSQLiteDatabase get() = helper().writableDatabase
+    override val readableDatabase: SupportSQLiteDatabase get() = helper().readableDatabase
+
+    override fun close() {
+        if (created.get()) real.close()
     }
 }
