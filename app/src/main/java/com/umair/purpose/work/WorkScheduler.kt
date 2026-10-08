@@ -14,6 +14,7 @@ import androidx.work.workDataOf
 import com.umair.purpose.letter.LetterPlanning
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.Duration
 import java.time.LocalDateTime
@@ -52,7 +53,14 @@ class WorkScheduler @Inject constructor(@ApplicationContext context: Context) {
     }
 
     /** Writes any letter that's owed now (catch-up), then sleeps until the next Sunday 20:00 or 1st of the month. */
-    fun checkLetters() = enqueueLetterCheck(Duration.ZERO, ExistingWorkPolicy.REPLACE)
+    suspend fun checkLetters() {
+        // Opening the app while a letter is being written must not cancel and restart it: the long model call
+        // would be paid for twice. The running job ends by scheduling the next check itself.
+        val running = runCatching { wm.getWorkInfosForUniqueWorkFlow(LETTERS).first().any { it.state == WorkInfo.State.RUNNING } }
+            .getOrDefault(false)
+        if (running) return
+        enqueueLetterCheck(Duration.ZERO, ExistingWorkPolicy.REPLACE)
+    }
 
     private fun enqueueLetterCheck(delay: Duration, policy: ExistingWorkPolicy) {
         val request = OneTimeWorkRequestBuilder<LetterWorker>()

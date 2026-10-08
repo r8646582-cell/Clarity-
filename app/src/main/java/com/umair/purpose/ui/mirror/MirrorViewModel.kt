@@ -72,7 +72,7 @@ class MirrorViewModel @Inject constructor(
     /** "Try again" on the delayed line: run the letter check again now. */
     fun tryAgain() {
         uiPrefs.setLetterDelayed(null)
-        work.checkLetters()
+        viewModelScope.launch { work.checkLetters() }
     }
 
     fun delete(id: Long) {
