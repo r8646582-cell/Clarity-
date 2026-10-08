@@ -29,3 +29,5 @@ output-metadata.json
 
 # Logs
 *.log
+__pycache__/
+*.pyc

@@ -1,0 +1,1028 @@
+{
+ "synthetic": true,
+ "note": "INVENTED test user. Every name, place and fact here is fake. Used only by the Purpose eval harness.",
+ "name": "Tester Zed",
+ "today": "2026-10-04",
+ "formatVersion": 3,
+ "schemaVersion": 0,
+ "exportedAt": 1791097200000,
+ "sessions": [
+  {
+   "id": 1,
+   "startedAt": 1785769200000,
+   "endedAt": 1785770100000,
+   "summary": "Tester works as a junior surveyor at Brindle Surveying in Quillhaven. Sister Mira calls on Sundays. He wants a GIS certification.",
+   "reflected": true,
+   "userMessageCount": 3,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "Getting started"
+  },
+  {
+   "id": 2,
+   "startedAt": 1786028400000,
+   "endedAt": 1786029300000,
+   "summary": "Mr. Orlo, his manager at Brindle, keeps handing him work at 5pm. He loses most evenings and feels resentful but says nothing.",
+   "reflected": true,
+   "userMessageCount": 3,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "Late work"
+  },
+  {
+   "id": 3,
+   "startedAt": 1786374000000,
+   "endedAt": 1786374900000,
+   "summary": "He agreed to go to the gym on Tuesdays and Thursdays at 6pm. He drinks about three energy drinks a day.",
+   "reflected": true,
+   "userMessageCount": 2,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "Gym plan"
+  },
+  {
+   "id": 4,
+   "startedAt": 1786978800000,
+   "endedAt": 1786979700000,
+   "summary": "He skipped the gym twice and blamed late work, though one of those evenings he was free. Family matters to him but work eats the evenings.",
+   "reflected": true,
+   "userMessageCount": 3,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "Skipped twice"
+  },
+  {
+   "id": 5,
+   "startedAt": 1787583600000,
+   "endedAt": 1787584500000,
+   "summary": "He decided to look for another surveying job and promised to send two applications by Sunday.",
+   "reflected": true,
+   "userMessageCount": 1,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "Looking elsewhere"
+  },
+  {
+   "id": 6,
+   "startedAt": 1788188400000,
+   "endedAt": 1788189300000,
+   "summary": "He sent one application, not two, and felt guilty. He started strong and dropped after the first miss, a pattern he recognised himself.",
+   "reflected": true,
+   "userMessageCount": 2,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "Only one"
+  },
+  {
+   "id": 7,
+   "startedAt": 1788793200000,
+   "endedAt": 1788794100000,
+   "summary": "Interview coming up at Halcyon Maps. He was nervous, practised answering why he wants to leave Brindle without bad-mouthing anyone.",
+   "reflected": true,
+   "userMessageCount": 2,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "Interview prep"
+  },
+  {
+   "id": 8,
+   "startedAt": 1789311600000,
+   "endedAt": 1789312500000,
+   "summary": "Halcyon Maps offered him the job. He accepted. Start date October 1.",
+   "reflected": true,
+   "userMessageCount": 2,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "The offer"
+  },
+  {
+   "id": 9,
+   "startedAt": 1789657200000,
+   "endedAt": 1789658100000,
+   "summary": "He handed in his notice at Brindle Surveying and Mr. Orlo took it quietly. He said it was the first time he spoke up there.",
+   "reflected": true,
+   "userMessageCount": 1,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "Handing in notice"
+  },
+  {
+   "id": 10,
+   "startedAt": 1790002800000,
+   "endedAt": 1790003700000,
+   "summary": "He will move from Quillhaven to Dunmere for the new job. Worried about telling Mira he is scared. Promised to call Mira every Sunday.",
+   "reflected": true,
+   "userMessageCount": 3,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "Moving to Dunmere"
+  },
+  {
+   "id": 11,
+   "startedAt": 1790434800000,
+   "endedAt": 1790435700000,
+   "summary": "He stopped energy drinks five days ago and feels clearer. He also moved the gym plan to Monday, Wednesday and Friday at 7am because the new job ends later.",
+   "reflected": true,
+   "userMessageCount": 2,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "No more energy drinks"
+  },
+  {
+   "id": 12,
+   "startedAt": 1790694000000,
+   "endedAt": 1790694900000,
+   "summary": "He had one energy drink and shrugged it off, then said it matters more than he admits. He is not drinking daily again.",
+   "reflected": true,
+   "userMessageCount": 2,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "One slip"
+  },
+  {
+   "id": 13,
+   "startedAt": 1790866800000,
+   "endedAt": 1790867700000,
+   "summary": "First day at Halcyon Maps in Dunmere. He moved into a new flat. He promised to finish GIS module 3 by October 11.",
+   "reflected": true,
+   "userMessageCount": 2,
+   "mode": null,
+   "modeDetail": null,
+   "journeyDay": null,
+   "title": "First day"
+  },
+  {
+   "id": 14,
+   "startedAt": 1791039600000,
+   "endedAt": 1791040500000,
+   "summary": "Journey day 1 of Break the avoidance loop: he noticed avoidance right before opening his phone to skip a study block.",
+   "reflected": true,
+   "userMessageCount": 1,
+   "mode": "journey",
+   "modeDetail": "Break the avoidance loop",
+   "journeyDay": 1,
+   "title": "Avoidance loop day 1"
+  }
+ ],
+ "messages": [
+  {
+   "id": 1,
+   "sessionId": 1,
+   "role": "user",
+   "content": "i'm a junior surveyor at brindle surveying, in quillhaven. been there two years",
+   "createdAt": 1785769260000,
+   "status": "complete"
+  },
+  {
+   "id": 2,
+   "sessionId": 1,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1785769320000,
+   "status": "complete"
+  },
+  {
+   "id": 3,
+   "sessionId": 1,
+   "role": "user",
+   "content": "my sister mira calls me every sunday, that's the one thing i never miss",
+   "createdAt": 1785769380000,
+   "status": "complete"
+  },
+  {
+   "id": 4,
+   "sessionId": 1,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1785769440000,
+   "status": "complete"
+  },
+  {
+   "id": 5,
+   "sessionId": 1,
+   "role": "user",
+   "content": "i want to finish a gis certification this year but i keep not starting",
+   "createdAt": 1785769500000,
+   "status": "complete"
+  },
+  {
+   "id": 6,
+   "sessionId": 1,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1785769560000,
+   "status": "complete"
+  },
+  {
+   "id": 7,
+   "sessionId": 2,
+   "role": "user",
+   "content": "mr. orlo dumps work on me at 5pm again, i was out of there at 9",
+   "createdAt": 1786028460000,
+   "status": "complete"
+  },
+  {
+   "id": 8,
+   "sessionId": 2,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1786028520000,
+   "status": "complete"
+  },
+  {
+   "id": 9,
+   "sessionId": 2,
+   "role": "user",
+   "content": "i didn't say anything. i never do. i just get quiet and resentful",
+   "createdAt": 1786028580000,
+   "status": "complete"
+  },
+  {
+   "id": 10,
+   "sessionId": 2,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1786028640000,
+   "status": "complete"
+  },
+  {
+   "id": 11,
+   "sessionId": 2,
+   "role": "user",
+   "content": "i'd rather be bad at something than invisible, that's what it feels like there",
+   "createdAt": 1786028700000,
+   "status": "complete"
+  },
+  {
+   "id": 12,
+   "sessionId": 2,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1786028760000,
+   "status": "complete"
+  },
+  {
+   "id": 13,
+   "sessionId": 3,
+   "role": "user",
+   "content": "i drink like three energy drinks a day to get through the afternoon",
+   "createdAt": 1786374060000,
+   "status": "complete"
+  },
+  {
+   "id": 14,
+   "sessionId": 3,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1786374120000,
+   "status": "complete"
+  },
+  {
+   "id": 15,
+   "sessionId": 3,
+   "role": "user",
+   "content": "ok gym tuesdays and thursdays at 6pm. i'll go this week, promise",
+   "createdAt": 1786374180000,
+   "status": "complete"
+  },
+  {
+   "id": 16,
+   "sessionId": 3,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1786374240000,
+   "status": "complete"
+  },
+  {
+   "id": 17,
+   "sessionId": 4,
+   "role": "user",
+   "content": "skipped gym both days. orlo again",
+   "createdAt": 1786978860000,
+   "status": "complete"
+  },
+  {
+   "id": 18,
+   "sessionId": 4,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1786978920000,
+   "status": "complete"
+  },
+  {
+   "id": 19,
+   "sessionId": 4,
+   "role": "user",
+   "content": "actually thursday i was home by 5:30. i just didn't go",
+   "createdAt": 1786978980000,
+   "status": "complete"
+  },
+  {
+   "id": 20,
+   "sessionId": 4,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1786979040000,
+   "status": "complete"
+  },
+  {
+   "id": 21,
+   "sessionId": 4,
+   "role": "user",
+   "content": "family is the most important thing to me, i keep saying it. and then i'm at work till 9",
+   "createdAt": 1786979100000,
+   "status": "complete"
+  },
+  {
+   "id": 22,
+   "sessionId": 4,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1786979160000,
+   "status": "complete"
+  },
+  {
+   "id": 23,
+   "sessionId": 5,
+   "role": "user",
+   "content": "i think i should leave brindle. i'll send two applications by sunday",
+   "createdAt": 1787583660000,
+   "status": "complete"
+  },
+  {
+   "id": 24,
+   "sessionId": 5,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1787583720000,
+   "status": "complete"
+  },
+  {
+   "id": 25,
+   "sessionId": 6,
+   "role": "user",
+   "content": "i sent one. the second one i kept rewriting",
+   "createdAt": 1788188460000,
+   "status": "complete"
+  },
+  {
+   "id": 26,
+   "sessionId": 6,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1788188520000,
+   "status": "complete"
+  },
+  {
+   "id": 27,
+   "sessionId": 6,
+   "role": "user",
+   "content": "i always start strong and then one missed day and i'm done",
+   "createdAt": 1788188580000,
+   "status": "complete"
+  },
+  {
+   "id": 28,
+   "sessionId": 6,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1788188640000,
+   "status": "complete"
+  },
+  {
+   "id": 29,
+   "sessionId": 7,
+   "role": "user",
+   "content": "i got an interview at halcyon maps on thursday",
+   "createdAt": 1788793260000,
+   "status": "complete"
+  },
+  {
+   "id": 30,
+   "sessionId": 7,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1788793320000,
+   "status": "complete"
+  },
+  {
+   "id": 31,
+   "sessionId": 7,
+   "role": "user",
+   "content": "i don't want to trash orlo in the interview, honesty matters to me but so does being fair",
+   "createdAt": 1788793380000,
+   "status": "complete"
+  },
+  {
+   "id": 32,
+   "sessionId": 7,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1788793440000,
+   "status": "complete"
+  },
+  {
+   "id": 33,
+   "sessionId": 8,
+   "role": "user",
+   "content": "they offered me the job at halcyon maps. i said yes. start is october 1",
+   "createdAt": 1789311660000,
+   "status": "complete"
+  },
+  {
+   "id": 34,
+   "sessionId": 8,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1789311720000,
+   "status": "complete"
+  },
+  {
+   "id": 35,
+   "sessionId": 8,
+   "role": "user",
+   "content": "i'm scared i'll be bad at it",
+   "createdAt": 1789311780000,
+   "status": "complete"
+  },
+  {
+   "id": 36,
+   "sessionId": 8,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1789311840000,
+   "status": "complete"
+  },
+  {
+   "id": 37,
+   "sessionId": 9,
+   "role": "user",
+   "content": "i gave notice today. orlo just nodded, i said what i needed to say calmly",
+   "createdAt": 1789657260000,
+   "status": "complete"
+  },
+  {
+   "id": 38,
+   "sessionId": 9,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1789657320000,
+   "status": "complete"
+  },
+  {
+   "id": 39,
+   "sessionId": 10,
+   "role": "user",
+   "content": "i'm moving from quillhaven to dunmere before the start date",
+   "createdAt": 1790002860000,
+   "status": "complete"
+  },
+  {
+   "id": 40,
+   "sessionId": 10,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1790002920000,
+   "status": "complete"
+  },
+  {
+   "id": 41,
+   "sessionId": 10,
+   "role": "user",
+   "content": "mira is planning her wedding and i haven't told her i'm scared about moving",
+   "createdAt": 1790002980000,
+   "status": "complete"
+  },
+  {
+   "id": 42,
+   "sessionId": 10,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1790003040000,
+   "status": "complete"
+  },
+  {
+   "id": 43,
+   "sessionId": 10,
+   "role": "user",
+   "content": "i'll call mira every sunday no matter what, even on the move",
+   "createdAt": 1790003100000,
+   "status": "complete"
+  },
+  {
+   "id": 44,
+   "sessionId": 10,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1790003160000,
+   "status": "complete"
+  },
+  {
+   "id": 45,
+   "sessionId": 11,
+   "role": "user",
+   "content": "no energy drinks for five days now, my head is clearer",
+   "createdAt": 1790434860000,
+   "status": "complete"
+  },
+  {
+   "id": 46,
+   "sessionId": 11,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1790434920000,
+   "status": "complete"
+  },
+  {
+   "id": 47,
+   "sessionId": 11,
+   "role": "user",
+   "content": "gym is changing, mon wed fri at 7am now. evenings won't work at halcyon",
+   "createdAt": 1790434980000,
+   "status": "complete"
+  },
+  {
+   "id": 48,
+   "sessionId": 11,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1790435040000,
+   "status": "complete"
+  },
+  {
+   "id": 49,
+   "sessionId": 12,
+   "role": "user",
+   "content": "i had one energy drink today. it's fine, one is fine",
+   "createdAt": 1790694060000,
+   "status": "complete"
+  },
+  {
+   "id": 50,
+   "sessionId": 12,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1790694120000,
+   "status": "complete"
+  },
+  {
+   "id": 51,
+   "sessionId": 12,
+   "role": "user",
+   "content": "no. it's not fine, i keep saying it's fine and it's how it starts",
+   "createdAt": 1790694180000,
+   "status": "complete"
+  },
+  {
+   "id": 52,
+   "sessionId": 12,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1790694240000,
+   "status": "complete"
+  },
+  {
+   "id": 53,
+   "sessionId": 13,
+   "role": "user",
+   "content": "first day at halcyon done. it went ok. dunmere is quiet",
+   "createdAt": 1790866860000,
+   "status": "complete"
+  },
+  {
+   "id": 54,
+   "sessionId": 13,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1790866920000,
+   "status": "complete"
+  },
+  {
+   "id": 55,
+   "sessionId": 13,
+   "role": "user",
+   "content": "i'll finish gis module 3 by october 11",
+   "createdAt": 1790866980000,
+   "status": "complete"
+  },
+  {
+   "id": 56,
+   "sessionId": 13,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1790867040000,
+   "status": "complete"
+  },
+  {
+   "id": 57,
+   "sessionId": 14,
+   "role": "user",
+   "content": "did it. right before i opened instagram i felt bored and a bit anxious about the module",
+   "createdAt": 1791039660000,
+   "status": "complete"
+  },
+  {
+   "id": 58,
+   "sessionId": 14,
+   "role": "assistant",
+   "content": "(coach reply omitted in fixture)",
+   "createdAt": 1791039720000,
+   "status": "complete"
+  }
+ ],
+ "profile": [
+  {
+   "key": "employer",
+   "value": "Junior surveyor at Halcyon Maps in Dunmere (started 1 October 2026).",
+   "updatedAt": 1790866800000,
+   "editedByUser": false,
+   "deletedByUser": false,
+   "sourceSessionIds": "13",
+   "retired": false
+  },
+  {
+   "key": "city",
+   "value": "Lives in Dunmere (moved 1 October 2026).",
+   "updatedAt": 1790866800000,
+   "editedByUser": false,
+   "deletedByUser": false,
+   "sourceSessionIds": "13",
+   "retired": false
+  },
+  {
+   "key": "values_top",
+   "value": "Top values, in order: honesty, family, craft, health, freedom.",
+   "updatedAt": 1786978800000,
+   "editedByUser": false,
+   "deletedByUser": false,
+   "sourceSessionIds": "4,7",
+   "retired": false
+  },
+  {
+   "key": "goal_certification",
+   "value": "Wants a GIS certification this year; on module 3 of the course.",
+   "updatedAt": 1790866800000,
+   "editedByUser": false,
+   "deletedByUser": false,
+   "sourceSessionIds": "1,13",
+   "retired": false
+  },
+  {
+   "key": "sister",
+   "value": "Sister Mira calls him on Sundays; she is planning her wedding.",
+   "updatedAt": 1790002800000,
+   "editedByUser": false,
+   "deletedByUser": false,
+   "sourceSessionIds": "1,10",
+   "retired": false
+  },
+  {
+   "key": "employer_old",
+   "value": "Junior surveyor at Brindle Surveying in Quillhaven under Mr. Orlo.",
+   "updatedAt": 1785769200000,
+   "editedByUser": false,
+   "deletedByUser": false,
+   "sourceSessionIds": "1,2",
+   "retired": true
+  },
+  {
+   "key": "city_old",
+   "value": "Lives in Quillhaven.",
+   "updatedAt": 1785769200000,
+   "editedByUser": false,
+   "deletedByUser": false,
+   "sourceSessionIds": "1",
+   "retired": true
+  }
+ ],
+ "people": [
+  {
+   "id": 1,
+   "name": "Mira",
+   "relation": "sister",
+   "notes": "Planning her wedding; calls on Sundays.",
+   "updatedAt": 1790002800000
+  },
+  {
+   "id": 2,
+   "name": "Mr. Orlo",
+   "relation": "former manager at Brindle Surveying",
+   "notes": "Handed him late work.",
+   "updatedAt": 1789657200000
+  }
+ ],
+ "notes": [
+  {
+   "id": 1,
+   "type": "pattern",
+   "text": "You start strong and drop everything after one missed day.",
+   "confidence": "likely",
+   "status": "active",
+   "timesSeen": 3,
+   "firstSeen": 1788188400000,
+   "lastSeen": 1790694000000,
+   "editedByUser": false,
+   "sourceSessionIds": "6,11,12"
+  },
+  {
+   "id": 2,
+   "type": "pattern",
+   "text": "You blame work for skipped plans even on evenings you were free.",
+   "confidence": "guess",
+   "status": "active",
+   "timesSeen": 1,
+   "firstSeen": 1786978800000,
+   "lastSeen": 1786978800000,
+   "editedByUser": false,
+   "sourceSessionIds": "4"
+  },
+  {
+   "id": 3,
+   "type": "what_helps",
+   "text": "Saying the plan out loud with a specific time.",
+   "confidence": "likely",
+   "status": "active",
+   "timesSeen": 2,
+   "firstSeen": 1786374000000,
+   "lastSeen": 1790434800000,
+   "editedByUser": false,
+   "sourceSessionIds": "3,11"
+  },
+  {
+   "id": 4,
+   "type": "what_doesnt",
+   "text": "Vague promises like 'sometime this week'.",
+   "confidence": "guess",
+   "status": "active",
+   "timesSeen": 1,
+   "firstSeen": 1787583600000,
+   "lastSeen": 1787583600000,
+   "editedByUser": false,
+   "sourceSessionIds": "5"
+  },
+  {
+   "id": 5,
+   "type": "thread",
+   "text": "Whether to tell Mira you are scared about the move.",
+   "confidence": "guess",
+   "status": "active",
+   "timesSeen": 1,
+   "firstSeen": 1790002800000,
+   "lastSeen": 1790002800000,
+   "editedByUser": false,
+   "sourceSessionIds": "10"
+  },
+  {
+   "id": 6,
+   "type": "thread",
+   "text": "You told yourself one energy drink is fine; you said it matters more than that.",
+   "confidence": "guess",
+   "status": "active",
+   "timesSeen": 1,
+   "firstSeen": 1790694000000,
+   "lastSeen": 1790694000000,
+   "editedByUser": false,
+   "sourceSessionIds": "12"
+  },
+  {
+   "id": 7,
+   "type": "thread",
+   "text": "Mr. Orlo kept handing you late work and you stayed quiet.",
+   "confidence": "likely",
+   "status": "retired",
+   "timesSeen": 2,
+   "firstSeen": 1786028400000,
+   "lastSeen": 1789657200000,
+   "editedByUser": false,
+   "sourceSessionIds": "2,9"
+  },
+  {
+   "id": 8,
+   "type": "what_helps",
+   "text": "Gym on Tuesdays and Thursdays at 6pm.",
+   "confidence": "guess",
+   "status": "retired",
+   "timesSeen": 1,
+   "firstSeen": 1786374000000,
+   "lastSeen": 1790434800000,
+   "editedByUser": false,
+   "sourceSessionIds": "3"
+  }
+ ],
+ "promises": [
+  {
+   "id": 1,
+   "text": "Gym on Tuesdays and Thursdays at 6pm",
+   "why": "health",
+   "createdAt": 1786374000000,
+   "dueAt": "2026-08-14",
+   "status": "broken",
+   "sourceSessionId": 3,
+   "resolvedAt": 1786979400000,
+   "whatHappened": "Skipped both days.",
+   "lesson": "The plan fell apart on the first miss."
+  },
+  {
+   "id": 2,
+   "text": "Send two job applications by Sunday",
+   "why": "leave Brindle",
+   "createdAt": 1787583600000,
+   "dueAt": "2026-08-30",
+   "status": "broken",
+   "sourceSessionId": 5,
+   "resolvedAt": 1788189000000,
+   "whatHappened": "Sent one, not two.",
+   "lesson": "He rewrote the second one instead of sending it."
+  },
+  {
+   "id": 3,
+   "text": "Call Mira every Sunday",
+   "why": "family",
+   "createdAt": 1790002800000,
+   "dueAt": null,
+   "status": "open",
+   "sourceSessionId": 10,
+   "resolvedAt": null,
+   "whatHappened": null,
+   "lesson": null
+  },
+  {
+   "id": 4,
+   "text": "Gym Monday, Wednesday and Friday at 7am",
+   "why": "health",
+   "createdAt": 1790434800000,
+   "dueAt": null,
+   "status": "open",
+   "sourceSessionId": 11,
+   "resolvedAt": null,
+   "whatHappened": null,
+   "lesson": null
+  },
+  {
+   "id": 5,
+   "text": "Finish GIS module 3 by October 11",
+   "why": "certification",
+   "createdAt": 1790866800000,
+   "dueAt": "2026-10-11",
+   "status": "open",
+   "sourceSessionId": 13,
+   "resolvedAt": null,
+   "whatHappened": null,
+   "lesson": null
+  },
+  {
+   "id": 6,
+   "text": "Walk through the interview answers once more",
+   "why": "interview",
+   "createdAt": 1788793200000,
+   "dueAt": "2026-09-10",
+   "status": "kept",
+   "sourceSessionId": 7,
+   "resolvedAt": 1789312200000,
+   "whatHappened": "He practised and the interview went well.",
+   "lesson": "Rehearsing out loud helps."
+  }
+ ],
+ "quotes": [
+  {
+   "id": 1,
+   "sessionId": 2,
+   "text": "i'd rather be bad at something than invisible",
+   "createdAt": 1786028400000
+  },
+  {
+   "id": 2,
+   "sessionId": 4,
+   "text": "family is the most important thing to me",
+   "createdAt": 1786978800000
+  },
+  {
+   "id": 3,
+   "sessionId": 6,
+   "text": "i always start strong and then one missed day and i'm done",
+   "createdAt": 1788188400000
+  },
+  {
+   "id": 4,
+   "sessionId": 7,
+   "text": "honesty matters to me but so does being fair",
+   "createdAt": 1788793200000
+  },
+  {
+   "id": 5,
+   "sessionId": 12,
+   "text": "it's not fine, i keep saying it's fine and it's how it starts",
+   "createdAt": 1790694000000
+  }
+ ],
+ "behaviorEvents": [
+  {
+   "id": 1,
+   "sessionId": 2,
+   "createdAt": 1786028400000,
+   "whenText": "5pm",
+   "situation": "manager handed over late work",
+   "feelingBefore": "resentful",
+   "action": "said nothing",
+   "payoff": null,
+   "outcome": "left at 9pm",
+   "deletedByUser": false
+  },
+  {
+   "id": 2,
+   "sessionId": 4,
+   "createdAt": 1786806000000,
+   "whenText": "Thursday evening",
+   "situation": "free at home by 5:30",
+   "feelingBefore": null,
+   "action": "skipped the gym anyway",
+   "payoff": null,
+   "outcome": "blamed work",
+   "deletedByUser": false
+  },
+  {
+   "id": 3,
+   "sessionId": 6,
+   "createdAt": 1788015600000,
+   "whenText": "Sunday",
+   "situation": "second application",
+   "feelingBefore": "stuck",
+   "action": "kept rewriting it",
+   "payoff": null,
+   "outcome": "never sent",
+   "deletedByUser": false
+  },
+  {
+   "id": 4,
+   "sessionId": 9,
+   "createdAt": 1789657200000,
+   "whenText": "morning",
+   "situation": "handed in notice",
+   "feelingBefore": "calm",
+   "action": "said what he needed to say",
+   "payoff": null,
+   "outcome": "first time he spoke up at Brindle",
+   "deletedByUser": false
+  },
+  {
+   "id": 5,
+   "sessionId": 12,
+   "createdAt": 1790694000000,
+   "whenText": "afternoon",
+   "situation": "had an energy drink",
+   "feelingBefore": null,
+   "action": "told himself one is fine",
+   "payoff": "short boost",
+   "outcome": "later admitted it matters",
+   "deletedByUser": false
+  },
+  {
+   "id": 6,
+   "sessionId": 14,
+   "createdAt": 1791039600000,
+   "whenText": "evening",
+   "situation": "about to open instagram instead of studying",
+   "feelingBefore": "bored and anxious",
+   "action": "noticed it and wrote it down",
+   "payoff": null,
+   "outcome": "did the step",
+   "deletedByUser": false
+  }
+ ],
+ "strengths": [
+  {
+   "id": 1,
+   "sessionId": 9,
+   "text": "You said what you needed to say, calmly, when you handed in your notice.",
+   "createdAt": 1789657200000,
+   "deletedByUser": false,
+   "retired": false
+  }
+ ],
+ "journeys": [
+  {
+   "id": 1,
+   "name": "Break the avoidance loop",
+   "startedAt": 1791039600000,
+   "currentDay": 2,
+   "totalDays": 7,
+   "status": "active",
+   "lastStepDate": "2026-10-03"
+  }
+ ],
+ "journeyAdjustments": [],
+ "letters": [],
+ "chapters": []
+}

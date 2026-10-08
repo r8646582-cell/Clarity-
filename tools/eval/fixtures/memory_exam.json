@@ -1,0 +1,432 @@
+{
+ "synthetic": true,
+ "now": "2026-10-04T14:00",
+ "questions": [
+  {
+   "id": "r01",
+   "kind": "recall",
+   "question": "Who was my manager at my old job?",
+   "gold": "Mr. Orlo, at Brindle Surveying.",
+   "evidence": [
+    "s:2",
+    "p:employer_old",
+    "n:7"
+   ]
+  },
+  {
+   "id": "r02",
+   "kind": "recall",
+   "question": "Which company did I leave in September?",
+   "gold": "Brindle Surveying (he handed in notice on 17 September).",
+   "evidence": [
+    "s:9",
+    "p:employer_old"
+   ]
+  },
+  {
+   "id": "r03",
+   "kind": "recall",
+   "question": "Where did I live before Dunmere?",
+   "gold": "Quillhaven.",
+   "evidence": [
+    "s:1",
+    "p:city_old",
+    "s:10"
+   ]
+  },
+  {
+   "id": "r04",
+   "kind": "recall",
+   "question": "Which company did I interview with?",
+   "gold": "Halcyon Maps.",
+   "evidence": [
+    "s:7",
+    "s:8"
+   ]
+  },
+  {
+   "id": "r05",
+   "kind": "recall",
+   "question": "What gym plan did I first promise in August?",
+   "gold": "Tuesdays and Thursdays at 6pm.",
+   "evidence": [
+    "s:3",
+    "pr:1"
+   ]
+  },
+  {
+   "id": "r06",
+   "kind": "recall",
+   "question": "What did I once say about being bad at something?",
+   "gold": "He said he would rather be bad at something than invisible, about how work felt (early August). A quotation must be exact.",
+   "evidence": [
+    "q:1",
+    "s:2"
+   ]
+  },
+  {
+   "id": "r07",
+   "kind": "recall",
+   "question": "How many energy drinks was I having a day back in August?",
+   "gold": "About three a day.",
+   "evidence": [
+    "s:3"
+   ]
+  },
+  {
+   "id": "r08",
+   "kind": "recall",
+   "question": "What do you know about my sister?",
+   "gold": "Her name is Mira; she calls him on Sundays and is planning her wedding.",
+   "evidence": [
+    "p:sister",
+    "s:10",
+    "s:1"
+   ]
+  },
+  {
+   "id": "r09",
+   "kind": "recall",
+   "question": "How did the Halcyon job come about?",
+   "gold": "He interviewed at Halcyon Maps, was offered the job, accepted it, and started on 1 October.",
+   "evidence": [
+    "s:7",
+    "s:8",
+    "s:13"
+   ]
+  },
+  {
+   "id": "r10",
+   "kind": "recall",
+   "question": "What happened with my second job application?",
+   "gold": "He sent only one application; he kept rewriting the second and never sent it.",
+   "evidence": [
+    "s:6",
+    "pr:2",
+    "e:3"
+   ]
+  },
+  {
+   "id": "r11",
+   "kind": "recall",
+   "question": "What happened when I handed in my notice?",
+   "gold": "Mr. Orlo nodded quietly; he said what he needed to say calmly, the first time he spoke up there.",
+   "evidence": [
+    "s:9",
+    "e:4"
+   ]
+  },
+  {
+   "id": "r12",
+   "kind": "recall",
+   "question": "What certification am I working toward?",
+   "gold": "A GIS certification; he is on module 3.",
+   "evidence": [
+    "p:goal_certification",
+    "s:1",
+    "pr:5"
+   ]
+  },
+  {
+   "id": "r13",
+   "kind": "recall",
+   "question": "What did I say I always do after one missed day?",
+   "gold": "He starts strong and then drops everything after a single missed day.",
+   "evidence": [
+    "q:3",
+    "n:1",
+    "s:6"
+   ]
+  },
+  {
+   "id": "r14",
+   "kind": "recall",
+   "question": "What did I say about honesty before the interview?",
+   "gold": "He did not want to trash Mr. Orlo; honesty matters to him but so does being fair.",
+   "evidence": [
+    "q:4",
+    "s:7"
+   ]
+  },
+  {
+   "id": "r15",
+   "kind": "recall",
+   "question": "What happened the week I skipped the gym twice?",
+   "gold": "He skipped both gym days and blamed Mr. Orlo, but admitted one evening he was home by 5:30 and just did not go.",
+   "evidence": [
+    "s:4",
+    "e:2",
+    "n:2"
+   ]
+  },
+  {
+   "id": "r16",
+   "kind": "recall",
+   "question": "How long had I been at my old job when we started talking?",
+   "gold": "About two years.",
+   "evidence": [
+    "s:1"
+   ]
+  },
+  {
+   "id": "t01",
+   "kind": "time",
+   "question": "What did I promise last week?",
+   "gold": "Promises from roughly the last week: finish GIS module 3 by 11 October (made 1 October) and gym Monday/Wednesday/Friday at 7am (26 September). No other promises may be invented.",
+   "evidence": [
+    "pr:5",
+    "pr:4"
+   ]
+  },
+  {
+   "id": "t02",
+   "kind": "time",
+   "question": "Which promises are still open?",
+   "gold": "Call Mira every Sunday; gym Monday, Wednesday and Friday at 7am; finish GIS module 3 by 11 October.",
+   "evidence": [
+    "pr:3",
+    "pr:4",
+    "pr:5"
+   ]
+  },
+  {
+   "id": "t03",
+   "kind": "time",
+   "question": "Which promises did I break?",
+   "gold": "The August gym plan (Tue/Thu 6pm) and sending two applications by Sunday (he sent one).",
+   "evidence": [
+    "pr:1",
+    "pr:2"
+   ]
+  },
+  {
+   "id": "t04",
+   "kind": "time",
+   "question": "When is my GIS module 3 due?",
+   "gold": "11 October.",
+   "evidence": [
+    "pr:5"
+   ]
+  },
+  {
+   "id": "t05",
+   "kind": "time",
+   "question": "Did I keep the promise to rehearse my interview answers?",
+   "gold": "Yes, it was kept: he practised and the interview went well.",
+   "evidence": [
+    "pr:6"
+   ]
+  },
+  {
+   "id": "t06",
+   "kind": "time",
+   "question": "What's coming up for me?",
+   "gold": "Today is Sunday, so calling Mira; and GIS module 3 is due on 11 October.",
+   "evidence": [
+    "pr:3",
+    "pr:5"
+   ]
+  },
+  {
+   "id": "v01",
+   "kind": "synthesis",
+   "question": "Which of my values conflicts with my schedule?",
+   "gold": "Family (and health) against long evenings at the old job: he said family matters most while working until 9pm, and the gym lapsed.",
+   "evidence": [
+    "p:values_top",
+    "q:2",
+    "s:4"
+   ]
+  },
+  {
+   "id": "v02",
+   "kind": "synthesis",
+   "question": "What are my top values?",
+   "gold": "In order: honesty, family, craft, health, freedom.",
+   "evidence": [
+    "p:values_top"
+   ]
+  },
+  {
+   "id": "v03",
+   "kind": "synthesis",
+   "question": "What pattern do you see in how I handle plans?",
+   "gold": "He starts strong and drops after one miss; he also blamed work for skipped plans even on a free evening. These are patterns noticed over time, not certainties.",
+   "evidence": [
+    "n:1",
+    "n:2"
+   ]
+  },
+  {
+   "id": "v04",
+   "kind": "synthesis",
+   "question": "What helps me follow through?",
+   "gold": "Saying the plan out loud with a specific time; rehearsing out loud also helped before the interview.",
+   "evidence": [
+    "n:3",
+    "pr:6"
+   ]
+  },
+  {
+   "id": "v05",
+   "kind": "synthesis",
+   "question": "What have I said I'm scared of?",
+   "gold": "Being bad at the new job, and telling his sister Mira he is scared about the move.",
+   "evidence": [
+    "s:8",
+    "s:10",
+    "n:5"
+   ]
+  },
+  {
+   "id": "v06",
+   "kind": "synthesis",
+   "question": "What have I done that I should be proud of?",
+   "gold": "He handed in his notice and said what he needed to say, calmly, for the first time speaking up at Brindle.",
+   "evidence": [
+    "s:9",
+    "e:4"
+   ]
+  },
+  {
+   "id": "v07",
+   "kind": "synthesis",
+   "question": "What's the story with me and energy drinks?",
+   "gold": "About three a day in August; he stopped and felt clearer by late September; one slip on 29 September that he first shrugged off, then admitted matters. Not drinking daily again.",
+   "evidence": [
+    "s:3",
+    "s:11",
+    "s:12",
+    "e:5",
+    "n:6"
+   ]
+  },
+  {
+   "id": "u01",
+   "kind": "superseded",
+   "question": "Where do I work?",
+   "gold": "Halcyon Maps in Dunmere, since 1 October. Not Brindle Surveying (he left).",
+   "evidence": [
+    "p:employer",
+    "s:13",
+    "s:9"
+   ]
+  },
+  {
+   "id": "u02",
+   "kind": "superseded",
+   "question": "Where do I live?",
+   "gold": "Dunmere (moved 1 October). Not Quillhaven.",
+   "evidence": [
+    "p:city",
+    "s:13",
+    "s:10"
+   ]
+  },
+  {
+   "id": "u03",
+   "kind": "superseded",
+   "question": "When do I go to the gym?",
+   "gold": "Monday, Wednesday and Friday at 7am (changed from Tuesday/Thursday 6pm).",
+   "evidence": [
+    "pr:4",
+    "s:11",
+    "n:8"
+   ]
+  },
+  {
+   "id": "u04",
+   "kind": "superseded",
+   "question": "Do I still drink energy drinks every day?",
+   "gold": "No. He stopped in September; there was one slip on 29 September.",
+   "evidence": [
+    "s:11",
+    "s:12"
+   ]
+  },
+  {
+   "id": "u05",
+   "kind": "superseded",
+   "question": "Is Mr. Orlo still my manager?",
+   "gold": "No. He left Brindle Surveying (notice on 17 September) and now works at Halcyon Maps.",
+   "evidence": [
+    "s:9",
+    "s:13"
+   ]
+  },
+  {
+   "id": "u06",
+   "kind": "superseded",
+   "question": "What used to be true about me that no longer holds?",
+   "gold": "At least three of: works at Brindle under Mr. Orlo (now Halcyon Maps); lives in Quillhaven (now Dunmere); gym Tue/Thu 6pm (now Mon/Wed/Fri 7am); three energy drinks a day (stopped).",
+   "evidence": [
+    "p:employer_old",
+    "p:city_old",
+    "n:8",
+    "s:3"
+   ]
+  },
+  {
+   "id": "u07",
+   "kind": "superseded",
+   "question": "Am I still sending out job applications?",
+   "gold": "No. He accepted the Halcyon Maps offer and started on 1 October.",
+   "evidence": [
+    "s:8",
+    "s:13"
+   ]
+  },
+  {
+   "id": "x01",
+   "kind": "trap",
+   "question": "What's Mira's fiancé called?",
+   "gold": "Never mentioned. The reply must say it does not know.",
+   "evidence": []
+  },
+  {
+   "id": "x02",
+   "kind": "trap",
+   "question": "What did I score on the GIS module 2 exam?",
+   "gold": "Never mentioned. The reply must say it does not know.",
+   "evidence": []
+  },
+  {
+   "id": "x03",
+   "kind": "trap",
+   "question": "What's my salary at Halcyon Maps?",
+   "gold": "Never mentioned. The reply must say it does not know.",
+   "evidence": []
+  },
+  {
+   "id": "x04",
+   "kind": "trap",
+   "question": "Do I have any pets?",
+   "gold": "Never mentioned. The reply must say there is no record of it.",
+   "evidence": []
+  },
+  {
+   "id": "x05",
+   "kind": "trap",
+   "question": "Who is my new manager at Halcyon?",
+   "gold": "Never mentioned. The reply must say it does not know.",
+   "evidence": []
+  },
+  {
+   "id": "x06",
+   "kind": "trap",
+   "question": "What did Mira say when I told her I was scared about moving?",
+   "gold": "False premise: the record says he had not told her. The reply must not invent her reaction and should say the record shows he had not told her.",
+   "evidence": [
+    "s:10",
+    "n:5"
+   ]
+  },
+  {
+   "id": "x07",
+   "kind": "trap",
+   "question": "What's my favourite food?",
+   "gold": "Never mentioned. The reply must say it does not know.",
+   "evidence": []
+  }
+ ]
+}
