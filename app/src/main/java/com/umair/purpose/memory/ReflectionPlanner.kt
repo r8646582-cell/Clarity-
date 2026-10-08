@@ -125,7 +125,7 @@ object ReflectionPlanner {
             val old = byKey[key.lowercase()] ?: continue
             if (value.isEmpty() || old.value.isBlank() || old.value.trim() == value) continue
             if (old.editedByUser || old.deletedByUser || !Corrections.mayReplace(old, value)) continue
-            val text = "$HISTORY_PREFIX${old.key}: ${old.value.trim()}"
+            val text = "$HISTORY_PREFIX${old.key}: ${Corrections.display(old.value).trim()}"
             if (text.trim().lowercase() in kept) continue
             out[key.lowercase()] = Note(
                 type = "thread", text = text, confidence = "guess", status = Note.RETIRED,

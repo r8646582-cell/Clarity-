@@ -241,6 +241,9 @@ class HybridRetriever(BaselineRetriever):
         self.min_sim = MIN_SIMILARITY if min_similarity is None else min_similarity
         self.docs = [Hit(*d) for d in search_docs(data)]
         self.vecs = [self.emb.embed(d.text) for d in self.docs]
+        # Live (active) notes get vectors too, like EmbeddingIndex's LIVE_NOTE documents.
+        self.live = [n for n in data.get("notes", []) if n.get("status") == "active"]
+        self.live_vecs = [self.emb.embed(n["text"]) for n in self.live]
 
     def retrieve(self, message: str, exclude_session=None):
         ts = terms(message)
@@ -256,4 +259,36 @@ class HybridRetriever(BaselineRetriever):
         semantic = [(d, s) for d, s in sims if s >= self.min_sim][:SEMANTIC_LIMIT]
         if not ts and not semantic:
             return [], []
-        return rank_hybrid(lexical, semantic, ts, exclude_session, self.now_ms), rank_notes(self.data.get("notes", []), ts)
+        related = [(n, s) for n, s in sorted(((n, float(qv @ v)) for n, v in zip(self.live, self.live_vecs)), key=lambda p: -p[1])
+                   if s >= self.min_sim][:SEMANTIC_LIMIT]
+        return (rank_hybrid(lexical, semantic, ts, exclude_session, self.now_ms),
+                rank_notes_hybrid(self.data.get("notes", []), related, ts, self.now_ms))
+
+
+def rank_notes_hybrid(notes, related, ts, now_ms):
+    """Mirror of RelevantMemories.rankNotesHybrid: keyword + meaning matches among active notes, RRF, recency/grade nudge."""
+    import math
+    if not related:
+        return rank_notes(notes, ts)
+    lex = [n for n in notes if n.get("status") == "active" and score(n["text"], ts) > 0]
+    lex.sort(key=lambda n: (-score(n["text"], ts), -n["lastSeen"], -n["id"]))
+    by = {n["id"]: n for n in lex}
+    sem = []
+    for n, _ in related:
+        by.setdefault(n["id"], n)
+        sem.append(n["id"])
+    grades = ["guess", "likely", "confirmed"]
+
+    def adj(item):
+        i, sc = item
+        n = by[i]
+        age = max(0.0, (now_ms - n["lastSeen"]) / 86_400_000.0)
+        g = max(0, grades.index(n["confidence"])) if n.get("confidence") in grades else 0
+        return sc * (1.0 + 0.15 * math.exp(-age * math.log(2) / HALF_LIFE_DAYS) + 0.10 * g / 2.0)
+    out, seen = [], set()
+    for i, _ in sorted(fuse([[n["id"] for n in lex], sem]), key=adj, reverse=True):
+        t = by[i]["text"].strip().lower()
+        if t not in seen:
+            seen.add(t)
+            out.append(by[i])
+    return out[:MAX_RESULTS]

@@ -44,7 +44,7 @@ class ProfileHistoryTest {
 
     @Test
     fun `a confirmed value that reflection may not replace leaves no history`() {
-        val confirmed = entry("city", "Karachi (confirmed)")
+        val confirmed = entry("city", "Karachi (you confirmed)")
         assertTrue(history(listOf(ProfileUpdate("city", "Lahore")), snap(confirmed)).isEmpty())
     }
 
