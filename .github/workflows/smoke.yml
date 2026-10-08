@@ -1,0 +1,51 @@
+name: Smoke test
+
+# Opens the released app on an emulator: installs the previous release, opens it, upgrades to the new one,
+# opens it again, and prints any crash. Run by hand from the Actions tab.
+on:
+  workflow_dispatch:
+    inputs:
+      old_tag:
+        description: "Release to install first (empty = fresh install only)"
+        default: "v1.1.0"
+      new_tag:
+        description: "Release to test"
+        default: "v1.2.0"
+  push:
+    branches: [ccr-2af2145f-kdczgr]
+    paths: [.github/workflows/smoke.yml]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OLD_TAG: ${{ inputs.old_tag || 'v1.1.0' }}
+      NEW_TAG: ${{ inputs.new_tag || 'v1.2.0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download APKs
+        run: |
+          mkdir -p apks/old apks/new
+          if [ -n "$OLD_TAG" ]; then gh release download "$OLD_TAG" -R "$GITHUB_REPOSITORY" -p '*.apk' -D apks/old; fi
+          gh release download "$NEW_TAG" -R "$GITHUB_REPOSITORY" -p '*.apk' -D apks/new
+          ls -l apks/*
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - name: Run on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: bash .github/smoke.sh
+      - name: Upload logcat
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logcat
+          path: logcat-*.txt
