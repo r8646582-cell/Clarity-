@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
 import androidx.paging.map
@@ -265,7 +266,10 @@ class TalkViewModel @Inject constructor(
 
     /** UPDATE-19 "Talk: home": open promises and recent conversations, re-read each minute for the time phrases. */
     private val home: Flow<Pair<List<Promise>, List<Conversation>>> = combine(
-        promises.observeOpen(), chat.observeRecentConversations(), minuteTicks(),
+        promises.observeOpen(), chat.observeRecentConversations(),
+        // Open across midnight: the day-based cards and journey step follow the calendar, not just onResume.
+        // Only runs while the screen is observed, so nothing ticks forever in the background (or in a test).
+        minuteTicks().onEach { today.value = LocalDate.now() },
     ) { p, c, _ -> p to c }
 
     val state: StateFlow<TalkUiState> = combine(
@@ -316,8 +320,6 @@ class TalkViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TalkUiState())
 
     init {
-        // Open across midnight: the day-based cards and journey step follow the calendar, not just onResume.
-        viewModelScope.launch { com.umair.purpose.time.calendarDays().collect { today.value = it } }
         viewModelScope.launch {
             engine.events.collect { e ->
                 when (e) {
