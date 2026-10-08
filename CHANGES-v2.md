@@ -21,3 +21,10 @@ Persona: mission, memory graded by evidence, values vs behavior, earned challeng
 ## Not verified
 - The full Android build and all other tests. Run: ./gradlew testDebugUnitTest assembleDebug
 - On device: do journey days still advance when you actually do the step?
+
+## Phase 0 (BLUEPRINT-V3)
+- CI run on GitHub (`./gradlew :app:testDebugUnitTest`, then `:app:assembleRelease`): both green on the V2 code with no fixes needed. No compile errors from the removed SafetyNet/HelpNumbers, `Settings(...)` or `MemoryRepository(...)` call sites.
+- CI now runs on every branch push and cancels superseded runs; the emulator smoke job runs only on main or by hand.
+- Journey deferral checked in code: ending a conversation never completes a day, only `advance_journey` does, the prompts forbid emitting it when he defers, and a testbench scenario covers it.
+- Added a manual "I did it" action on the Path screen as the stall fallback. It uses the same one-step-a-day rule as `advance_journey`, and the coach's next context line says today's step is done.
+- Still needs a device: defer day 1 and confirm it stays open, then do a real step and confirm the coach completes it.
