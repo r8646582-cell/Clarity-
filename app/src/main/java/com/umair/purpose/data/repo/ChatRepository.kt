@@ -333,8 +333,9 @@ class ChatRepository @Inject constructor(
             db.journeyAdjustmentDao().clear(); db.usageMonthDao().clear()
             db.disagreementDao().clear(); db.contradictionDao().clear(); db.actionLogDao().clear()
             db.screenUsageDao().clear()
-            db.jobModelDao().clear()
+            // His per-job model choices are settings, and settings stay. Vectors made from his words are his data.
             db.searchDao().clear()
+            db.embeddingDao().clear()
             db.errorDao().clear()
             // His saved prompt files are his data too, and "Erase everything" says all of it goes.
             db.promptDao().clear()

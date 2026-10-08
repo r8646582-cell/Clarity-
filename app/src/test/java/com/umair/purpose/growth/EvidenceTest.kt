@@ -104,4 +104,13 @@ class EvidenceTest {
         assertTrue(text.contains("30 days 24/24"))
         assertTrue(text.contains("MEETS the habit_built minimum"))
     }
+
+    @Test
+    fun `off the record promises never count toward growth evidence`() {
+        val remembered = (1..3).map { promise(it.toLong(), today.minusDays(it.toLong()), Promise.KEPT) }
+        val secret = (4..9).map { promise(it.toLong(), today.minusDays(it.toLong()), Promise.KEPT).copy(offTheRecord = true) }
+        val stats = Evidence.actions(today, zone, remembered + secret).single()
+        assertEquals(3, stats.planned14)
+        assertEquals(3, stats.kept14)
+    }
 }

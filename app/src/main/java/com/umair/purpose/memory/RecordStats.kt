@@ -35,7 +35,7 @@ object RecordStats {
     )
 
     private fun resolved(promises: List<Promise>) =
-        promises.filter { it.status == Promise.KEPT || it.status == Promise.BROKEN }
+        promises.filter { !it.offTheRecord && (it.status == Promise.KEPT || it.status == Promise.BROKEN) }
 
     internal fun promiseLine(promises: List<Promise>, today: LocalDate, zone: ZoneId): String? {
         val done = resolved(promises)

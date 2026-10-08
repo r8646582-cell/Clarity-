@@ -126,7 +126,8 @@ object Evidence {
      */
     fun actions(today: LocalDate, zone: ZoneId, promises: List<Promise>): List<ActionStats> {
         fun day(ms: Long) = Instant.ofEpochMilli(ms).atZone(zone).toLocalDate()
-        val relevant = promises.filter { it.status != Promise.DROPPED && it.status != Promise.RENEGOTIATED }
+        // Off-the-record promises are not remembered: they never feed the growth tree or its prompt.
+        val relevant = promises.filter { it.status != Promise.DROPPED && it.status != Promise.RENEGOTIATED && !it.offTheRecord }
         return relevant.groupBy { ActionKeys.of(it) }.mapNotNull { (key, group) ->
             val dated = group.mapNotNull { p ->
                 val d = p.due?.date ?: day(p.createdAt)

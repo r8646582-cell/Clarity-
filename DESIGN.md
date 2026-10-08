@@ -294,16 +294,24 @@ The screen must feel calm and scannable no matter how much Purpose knows.
 
 
 ### Settings
-Main level, in this order:
+Main level, in this order (this matches the code in `ui/settings/SettingsScreen.kt`):
 1. **Your key**: masked field; once saved, show "Connected" with an accent check and a "Change" button.
 2. **How direct should I be?**: segmented Gentle / Balanced / Firm.
 3. **Theme**: Night / Day / Follow system.
-4b. **Daily pulse**: on/off (off by default). **Read replies aloud**: on/off (off by default).
-4c. **Hide in recent apps**: meta line under it: "Also blocks screenshots. Turn off temporarily if you
-    need to take one."
-5. **Backup**: Export / Restore with passphrase (keep the existing explanation text).
-6. A meta line: "This month: about $0.42" (from usage stats).
-7. **Advanced** (collapsed): provider, base URL, models, temperature, thinking switch, prices, detailed usage.
+4. **Daily life**: Daily pulse (off by default), Read replies aloud (off by default) with the voice picker,
+   Vibration (on by default).
+5. **Privacy**: Lock Purpose; Hide in recent apps, with the meta line "Also blocks screenshots. Turn off
+   temporarily if you need to take one."
+6. **Phone screen time** (Phase 4): off by default, one switch with a plain explanation. Turning it on sends him to
+   Android's own usage-access screen. Once there is data: View, Export CSV, Delete all (confirm). Turning it off deletes
+   everything collected (confirm).
+7. **Keep Purpose reliable**: battery, autostart, exact alarms.
+8. **Backup**: Export / Restore with passphrase, automatic weekly backup, Export my life.
+9. Once-a-year checks, then a meta line such as "This month: about $0.42" (from usage stats) and the budget lines.
+10. **Advanced** (collapsed): provider, base URL, models, temperature, thinking switch, prices, **Models for slow jobs**
+    (Phase 5: one row per job with its model, this month's cost and a projection, "Change", "Use the strongest
+    available", "Reset"), voice language, budget, detailed usage and cost split, off-peak, backup provider,
+    version, and **Developer** as the last row.
 
 Prices are prefilled with defaults so he never has to type them.
 
