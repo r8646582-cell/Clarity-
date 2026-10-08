@@ -36,7 +36,7 @@ class PromiseRepository @Inject constructor(
     /** The one promise the coach may raise today, if any. */
     suspend fun open(): List<Promise> = dao.open()
 
-    suspend fun dueForInjection(today: LocalDate): Promise? = PromiseRules.dueForInjection(dao.open(), today)
+    suspend fun dueForInjection(today: LocalDate): Promise? = PromiseRules.dueForInjection(dao.open().filter { !it.offTheRecord }, today)
 
     /**
      * A promise the coach saved in chat. A promise already open in other words is not added twice — but if this
@@ -45,7 +45,7 @@ class PromiseRepository @Inject constructor(
      */
     suspend fun saveFromChat(line: ReplyMarkers.PromiseLine, sessionId: Long?, messageId: Long?, zone: ZoneId, now: Long): Promise? {
         val open = dao.open()
-        val duplicate = open.firstOrNull { ReflectionPlanner.samePromise(it.text, line.text) }
+        val duplicate = open.firstOrNull { !it.offTheRecord && ReflectionPlanner.samePromise(it.text, line.text) }
         // A time already past (agreed at 9:05 for 9:00) goes off straight away, never silently dropped.
         val remindAt = line.remindAt?.atZone(zone)?.toInstant()?.toEpochMilli()?.let { PromiseRules.reminderTime(it, now, justAgreed = true) }
         if (duplicate != null) {
