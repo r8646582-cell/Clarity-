@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Night is the default look; Compose draws everything else. -->
+    <style name="Theme.Purpose" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+        <item name="android:statusBarColor">@color/purpose_night</item>
+        <item name="android:navigationBarColor">@color/purpose_night</item>
+        <item name="android:colorAccent">@color/purpose_apricot</item>
+    </style>
+</resources>
