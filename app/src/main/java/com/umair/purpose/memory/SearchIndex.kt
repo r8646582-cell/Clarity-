@@ -24,7 +24,7 @@ class SearchIndex @Inject constructor(
     /** Everything, from scratch, in one transaction. A few thousand rows a year: quick, and only run rarely. */
     suspend fun rebuild(zone: ZoneId = ZoneId.systemDefault()) {
         rebuildDocs(zone)
-        syncEmbeddings()
+        embeddings?.requestSync()
     }
 
     /** Embeds new documents; never throws and never blocks anything that matters. */
@@ -51,7 +51,7 @@ class SearchIndex @Inject constructor(
     /** After a reflection: that conversation's summary, quotes and moments. */
     suspend fun indexSession(sessionId: Long, zone: ZoneId = ZoneId.systemDefault()) {
         indexSessionDocs(sessionId, zone)
-        syncEmbeddings()
+        embeddings?.requestSync()
     }
 
     private suspend fun indexSessionDocs(sessionId: Long, zone: ZoneId) = db.withTransaction {
@@ -71,19 +71,19 @@ class SearchIndex @Inject constructor(
     suspend fun indexLetter(l: Letter) {
         dao.delete(SearchDocs.LETTER, l.id.toString())
         dao.insert(listOf(SearchDocs.letter(l)))
-        syncEmbeddings()
+        embeddings?.requestSync()
     }
 
     suspend fun indexChapter(c: Chapter) {
         dao.delete(SearchDocs.CHAPTER, c.id.toString())
         dao.insert(listOf(SearchDocs.chapter(c)))
-        syncEmbeddings()
+        embeddings?.requestSync()
     }
 
     /** After gardening or a cap: archived memory becomes searchable. */
     suspend fun indexArchive(zone: ZoneId = ZoneId.systemDefault()) {
         indexArchiveDocs(zone)
-        syncEmbeddings()
+        embeddings?.requestSync()
     }
 
     private suspend fun indexArchiveDocs(zone: ZoneId) = db.withTransaction {
@@ -105,7 +105,7 @@ class SearchIndex @Inject constructor(
         val terms = RelevantMemories.terms(message)
         val lexical = RelevantMemories.matchQuery(terms)?.let { dao.search(it, RelevantMemories.CANDIDATES) }.orEmpty()
         // Meaning matches are a bonus: any failure leaves the full-text result.
-        val semantic = runCatching { embeddings?.nearest(message) }.getOrNull().orEmpty()
+        val semantic = runCatching { embeddings?.related(message)?.archive }.getOrNull().orEmpty()
         if (terms.isEmpty() && semantic.isEmpty()) return null
         RelevantMemories.block(RelevantMemories.rankHybrid(lexical, semantic, terms, currentSession))
     }.getOrNull()

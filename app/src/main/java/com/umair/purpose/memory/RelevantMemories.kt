@@ -113,7 +113,7 @@ object RelevantMemories {
     fun block(hits: List<SearchHit>): String? {
         if (hits.isEmpty()) return null
         return "Possibly relevant from the past (from your archive; mention only if it helps):\n" +
-            hits.sortedBy { it.day }.joinToString("\n") { "- ${it.day}, ${label(it.kind)}: ${clip(it.text)}" }
+            hits.sortedBy { it.day }.joinToString("\n") { "- ${it.day}, ${label(it)}: ${clip(it.text.removePrefix(ReflectionPlanner.HISTORY_PREFIX))}" }
     }
 
     /**
@@ -124,20 +124,41 @@ object RelevantMemories {
     const val INSIGHTS_HEADER = "RELEVANT INSIGHTS & REALIZATIONS:"
 
     /** Active matching notes only; confidence stays visible so a guess is never presented as a fact. */
-    fun rankNotes(notes: List<Note>, terms: List<String>): List<Note> = notes.asSequence()
+    fun rankNotes(notes: List<Note>, terms: List<String>, limit: Int = MAX_RESULTS): List<Note> = notes.asSequence()
         .filter { it.status == Note.ACTIVE }
         .distinctBy { it.id }
         .map { it to score(it.text, terms) }
         .filter { it.second > 0 }
         .sortedWith(compareByDescending<Pair<Note, Int>> { it.second }
             .thenByDescending { it.first.lastSeen }.thenByDescending { it.first.id })
-        .map { it.first }.take(MAX_RESULTS).toList()
+        .map { it.first }.take(limit).toList()
+
+    /**
+     * Phase 2: keyword matches and meaning matches among his live notes, merged by reciprocal rank fusion and nudged
+     * by recency and evidence grade (guess, likely, confirmed). Without meaning matches this is [rankNotes].
+     */
+    fun rankNotesHybrid(lexical: List<Note>, semantic: List<Pair<Note, Double>>, terms: List<String>): List<Note> {
+        val related = semantic.map { it.first }.filter { it.status == Note.ACTIVE }
+        if (related.isEmpty()) return rankNotes(lexical, terms)
+        val byId = LinkedHashMap<Long, Note>()
+        val lexIds = rankNotes(lexical, terms, limit = Int.MAX_VALUE).onEach { byId.putIfAbsent(it.id, it) }.map { it.id }
+        val semIds = related.onEach { byId.putIfAbsent(it.id, it) }.map { it.id }
+        val ranked = HybridRetrieval.rerank(HybridRetrieval.fuse(listOf(lexIds, semIds)).map { (id, score) ->
+            val n = byId.getValue(id)
+            HybridRetrieval.Candidate(id.toString(), score, n.lastSeen, Note.CONFIDENCES.indexOf(n.confidence).coerceAtLeast(0))
+        }, System.currentTimeMillis())
+        return ranked.mapNotNull { byId[it.id.toLong()] }.distinctBy { it.text.trim().lowercase() }.take(MAX_RESULTS)
+    }
 
     fun insights(notes: List<Note>): String? {
         val active = notes.filter { it.status == Note.ACTIVE }.distinctBy { it.id }.take(MAX_RESULTS)
         if (active.isEmpty()) return null
         return INSIGHTS_HEADER + "\n" + active.joinToString("\n") { "- ${clip(it.text)} [${it.confidence}]" }
     }
+
+    /** A history note is an earlier value of a profile line: say it used to be true and when it changed. */
+    private fun label(h: SearchHit) =
+        if (h.kind == SearchDocs.NOTE && h.text.startsWith(ReflectionPlanner.HISTORY_PREFIX)) "used to be true, changed then" else label(h.kind)
 
     private fun label(kind: String) = when (kind) {
         SearchDocs.SUMMARY -> "a conversation"

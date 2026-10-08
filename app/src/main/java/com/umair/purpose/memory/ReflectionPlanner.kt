@@ -35,6 +35,8 @@ data class ApplyPlan(
     val strengths: List<Strength> = emptyList(),
     val quotes: List<Quote> = emptyList(),
     val ideas: List<IdeaUsed> = emptyList(),
+    /** Phase 2: earlier values of profile lines that changed, kept as retired notes (never deleted, never shown as current). */
+    val history: List<Note> = emptyList(),
     val significance: Int? = null,
     val tone: String? = null,
     /** Null = keep the current title. */
@@ -70,6 +72,7 @@ object ReflectionPlanner {
         profile = planProfile(result, current, sessionId, now),
         people = planPeople(result, current, sessionId, now),
         notes = planNotes(result, current, sessionId, now),
+        history = planHistory(result, current, now),
         promises = planPromises(result, current, sessionId, now),
         areas = planAreas(result, current, now),
         behaviorEvents = result.behaviorEvents.mapNotNull { b ->
@@ -100,6 +103,38 @@ object ReflectionPlanner {
             out += Strength(sessionId = sessionId, text = text, createdAt = now)
         }
         return out
+    }
+
+    /** Prefix of a history note's text; also how the app tells one apart from an ordinary archived note. */
+    const val HISTORY_PREFIX = "Used to be true, "
+
+    /**
+     * Phase 2: when reflection changes what a profile line says, the old words are not lost. They become a retired
+     * note ("Used to be true, city: Karachi") whose validTo is when it changed, so a question about the past can
+     * still find it. Only changes the model made from his words: his own edits and deletions are corrections or
+     * erasures, not history, and are never kept here. Same source conversations as the line, so forgetting one
+     * conversation forgets its history too.
+     */
+    fun planHistory(r: ReflectionResult, cur: MemorySnapshot, now: Long): List<Note> {
+        val byKey = cur.profile.associateBy { it.key.lowercase() }
+        val kept = cur.notes.map { it.text.trim().lowercase() }.toSet()
+        val out = LinkedHashMap<String, Note>()
+        for (u in r.profileUpdates) {
+            val key = u.key.trim()
+            val value = u.value.trim()
+            val old = byKey[key.lowercase()] ?: continue
+            if (value.isEmpty() || old.value.isBlank() || old.value.trim() == value) continue
+            if (old.editedByUser || old.deletedByUser || !Corrections.mayReplace(old, value)) continue
+            val text = "$HISTORY_PREFIX${old.key}: ${old.value.trim()}"
+            if (text.trim().lowercase() in kept) continue
+            out[key.lowercase()] = Note(
+                type = "thread", text = text, confidence = "guess", status = Note.RETIRED,
+                timesSeen = 1, firstSeen = old.updatedAt, lastSeen = old.updatedAt,
+                sourceSessionIds = old.sourceSessionIds,
+                recordedAt = now, validFrom = old.validFrom.takeIf { it > 0 } ?: old.updatedAt, validTo = now,
+            )
+        }
+        return out.values.toList()
     }
 
     private fun planProfile(r: ReflectionResult, cur: MemorySnapshot, sessionId: Long, now: Long): List<ProfileEntry> {

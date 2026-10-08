@@ -136,7 +136,9 @@ class MemoryRepository @Inject constructor(
     suspend fun relevantInsights(message: String): String? {
         val terms = RelevantMemories.terms(message)
         val matches = terms.flatMap { searchMemories(it) }.distinctBy { it.id }
-        return RelevantMemories.insights(RelevantMemories.rankNotes(matches, terms))
+        // Phase 2: notes close in meaning too, found by the on-device model (empty without one).
+        val related = search.relatedNotes(message).mapNotNull { (id, sim) -> notes.get(id)?.let { it to sim } }
+        return RelevantMemories.insights(RelevantMemories.rankNotesHybrid(matches, related, terms))
     }
 
     /**
@@ -154,6 +156,10 @@ class MemoryRepository @Inject constructor(
         if (plan.profile.isNotEmpty()) profile.upsert(plan.profile)
         if (plan.people.isNotEmpty()) people.upsert(plan.people)
         if (plan.notes.isNotEmpty()) notes.upsert(plan.notes)
+        if (plan.history.isNotEmpty()) {
+            notes.upsert(plan.history)
+            search.indexArchive() // the old wording is findable at once
+        }
         if (plan.promises.isNotEmpty()) promises.upsert(plan.promises)
         if (plan.areas.isNotEmpty()) areas.upsert(plan.areas)
         // A continued conversation must never add the same moment or quote twice.
@@ -219,7 +225,7 @@ class MemoryRepository @Inject constructor(
             else combined.also { notes.upsert(listOf(it)) }
         if (absorbed.isNotEmpty()) notes.upsert(absorbed.map { it.retiredAt(now) })
         // Replacement archives become searchable immediately, without waiting for monthly gardening.
-        if (absorbed.isNotEmpty()) search.indexArchive()
+        if (absorbed.isNotEmpty()) search.indexArchive() else search.notesChanged()
         saved
     }
 
