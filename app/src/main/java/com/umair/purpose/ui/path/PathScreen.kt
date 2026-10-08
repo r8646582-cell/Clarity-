@@ -142,9 +142,9 @@ fun PathScreen(onOpenTalk: () -> Unit, onOpenTree: () -> Unit, vm: PathViewModel
                 }
 
                 item { Heading("Promises") }
-                if (state.recordLine != null) {
+                state.recordLine?.let { recordLine ->
                     item {
-                        Text(state.recordLine!!, style = Purpose.type.itemText, color = Purpose.colors.text)
+                        Text(recordLine, style = Purpose.type.itemText, color = Purpose.colors.text)
                         state.runLine?.let { Meta(it) }
                         Spacer(Modifier.height(16.dp))
                     }

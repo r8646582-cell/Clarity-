@@ -413,7 +413,7 @@ private fun NewSession(
             HomeRow(p.title, p.meta) { onPickUp(p.sessionId) }
             Spacer(Modifier.height(16.dp))
         }
-        state.card?.let { card ->
+        state.card?.let { card -> key(card) {
             val dismiss = rememberSwipeToDismissBoxState(confirmValueChange = {
                 if (it != SwipeToDismissBoxValue.Settled) onDismissCard(card)
                 true
@@ -421,7 +421,7 @@ private fun NewSession(
             SwipeToDismissBox(state = dismiss, backgroundContent = {}) {
                 TalkCardView(card, onAction = { onCardAction(card) }, onSavePulse = onSavePulse, onLater = onMilestoneLater, onNever = onMilestoneNever)
             }
-        }
+        } }
         Spacer(Modifier.height(24.dp))
     }
 }

@@ -120,6 +120,8 @@ class MainActivity : FragmentActivity() {
             LaunchedEffect(night) { applySystemBars(night) }
             PurposeTheme(current.theme) {
                 val needsLock = current.lockEnabled && canLock()
+                // With the lock off nothing is locked: turning it on in Settings must not lock him out on the spot.
+                LaunchedEffect(needsLock) { if (!needsLock) lock.unlock() }
                 if (needsLock && locked) {
                     LockScreen(onUnlock = ::authenticate)
                     LaunchedEffect(Unit) { authenticate() }
