@@ -119,7 +119,10 @@ object BackupCodec {
     private val MAGIC = "PURPOSE1".toByteArray(Charsets.US_ASCII)
     private const val SALT_SIZE = 16
     private const val IV_SIZE = 12
-    const val DEFAULT_ITERATIONS = 210_000
+    /** OWASP's current PBKDF2-HMAC-SHA256 figure. Older files keep the count they were written with (it is in the header). */
+    const val DEFAULT_ITERATIONS = 600_000
+    /** What backups used before Phase 6; still readable. */
+    const val LEGACY_ITERATIONS = 210_000
     const val MIN_PASSPHRASE = 8
     const val MAX_FILE_BYTES = 64 * 1024 * 1024
     const val MAX_JSON_BYTES = 128 * 1024 * 1024

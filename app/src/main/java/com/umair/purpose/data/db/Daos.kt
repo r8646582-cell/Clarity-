@@ -164,8 +164,8 @@ interface MessageDao {
     @Query("SELECT * FROM message ORDER BY id")
     suspend fun all(): List<Message>
 
-    /** Phase 3: his newest written messages from conversations that are remembered, to find where he said something. */
-    @Query("SELECT m.* FROM message m JOIN session s ON s.id = m.sessionId WHERE m.role = 'user' AND s.offTheRecord = 0 AND m.createdAt <= :until ORDER BY m.createdAt DESC LIMIT 2000")
+    /** Phase 3: his newest written messages (off-the-record chats are never stored), to find where he said something. */
+    @Query("SELECT m.* FROM message m JOIN session s ON s.id = m.sessionId WHERE m.role = 'user' AND m.createdAt <= :until ORDER BY m.createdAt DESC LIMIT 2000")
     suspend fun userMessagesUntil(until: Long): List<Message>
 
     @Query("SELECT * FROM message WHERE id = :id")

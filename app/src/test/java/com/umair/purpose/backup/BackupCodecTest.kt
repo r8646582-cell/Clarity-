@@ -45,4 +45,20 @@ class BackupCodecTest {
     fun `short passphrase rejected`() {
         BackupCodec.encode(data, "short".toCharArray(), 10_000)
     }
+
+    @Test
+    fun `default is the current OWASP count and is stored in the header`() {
+        assertEquals(600_000, BackupCodec.DEFAULT_ITERATIONS)
+        val file = BackupCodec.encode(data, pass)
+        // "PURPOSE1" (8) + salt (16), then the 4-byte iteration count.
+        assertEquals(600_000, java.nio.ByteBuffer.wrap(file).getInt(24))
+        assertEquals(data, BackupCodec.decode(file, pass))
+    }
+
+    @Test
+    fun `a backup written with the old 210k count still restores`() {
+        val old = BackupCodec.encode(data, pass, BackupCodec.LEGACY_ITERATIONS)
+        assertEquals(210_000, java.nio.ByteBuffer.wrap(old).getInt(24))
+        assertEquals(data, BackupCodec.decode(old, pass))
+    }
 }
