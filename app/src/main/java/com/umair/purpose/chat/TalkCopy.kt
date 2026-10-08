@@ -65,7 +65,7 @@ object TalkCopy {
     fun inCharacter(messages: List<Message>, with: String?): Set<Long> {
         val name = with?.trim()?.takeIf { it.isNotEmpty() } ?: return emptySet()
         val enter = Regex("""\b(i'?m|i am|i'll be)\s+(now\s+)?${Regex.escape(name)}(\s+now|\s+again)?\b""", RegexOption.IGNORE_CASE)
-        val stop = Regex("""\b(stop|ruko|bas)\b""", RegexOption.IGNORE_CASE)
+        val stop = Regex("""\b(stop)\b""", RegexOption.IGNORE_CASE)
         val out = mutableSetOf<Long>()
         var armed = false
         var on = false

@@ -12,14 +12,13 @@ from datetime import datetime
 from .prompt import ZONE
 
 MAX_RESULTS, MAX_TERMS, CANDIDATES, MAX_CHARS = 5, 8, 60, 320
-# Exactly the app's STOP list today (including the Roman Urdu words and feel/want/need/think that Phase 2 reconsiders).
+# Mirrors the app's STOP list. Phase 2: Roman Urdu removed (English only). feel/want/need/think/know stay: dropping them
+# scored slightly worse on the memory exam (0.708 -> 0.699), so there is no evidence for changing them.
 STOP = set("""the and for that this with you your are was were have has had but not what when where why how who can could
 would should will just like really about from they them their there then than been being into out all any some get got
 did does doing done its it's i'm im dont don't cant can't know think feel feeling want need today yesterday tomorrow now
 still also very much more most lot lots thing things something anything nothing everything okay yeah yes hmm one two time
-day days again even only too him her his she our off over said say says going gonna make made aur hai hain tha thi the
-nahi nahin kya kyun kaise mein main mujhe mera meri mere tum aap yeh woh bhi toh phir kuch bas abhi raha rahi rahe hoon
-hun ho ko se ka ki ke par pe yaar acha accha theek haan""".split())
+day days again even only too him her his she our off over said say says going gonna make made""".split())
 
 
 @dataclass

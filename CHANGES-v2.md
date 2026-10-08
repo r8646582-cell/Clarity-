@@ -31,3 +31,9 @@ previous comparable run. See `tools/eval/README.md`.
 Baseline committed in `eval/results/` covers the code-computed sections only (retrieval coverage 70.8 overall / 58% archive-only,
 honesty 100 on the synthetic fixture). The model-graded sections (bench, answers) need an API key and have NOT been run yet.
 Phase 0 (a full `./gradlew testDebugUnitTest assembleDebug` and the on-device journey check) has not been done in this environment.
+
+## Phase 2 (started): stale Roman Urdu removed
+Removed the Roman Urdu stop words from `RelevantMemories.STOP` and `ruko|bas` from the practice-mode stop regex in `TalkCopy`.
+Memory exam retrieval is unchanged (70.8). Dropping feel/want/need/think/know from STOP scored slightly worse (70.8 -> 69.9), so they stay.
+NOT done yet: hybrid embeddings retrieval, bitemporal facts (valid_from/valid_to + migration). Not compiled here: the Android toolchain
+cannot be downloaded in this environment, so the two Kotlin edits above are untested by Gradle.

@@ -25,7 +25,7 @@ object RelevantMemories {
     const val CANDIDATES = 60
     private const val MAX_CHARS = 320
 
-    /** Words that say nothing about what he's talking about, in English and Roman Urdu. */
+    /** Words that say nothing about what he's talking about (English only, like the app). */
     private val STOP = setOf(
         "the", "and", "for", "that", "this", "with", "you", "your", "are", "was", "were", "have", "has", "had", "but", "not",
         "what", "when", "where", "why", "how", "who", "can", "could", "would", "should", "will", "just", "like", "really",
@@ -35,10 +35,6 @@ object RelevantMemories {
         "very", "much", "more", "most", "lot", "lots", "thing", "things", "something", "anything", "nothing", "everything",
         "okay", "yeah", "yes", "hmm", "one", "two", "time", "day", "days", "again", "even", "only", "too", "him", "her",
         "his", "she", "our", "out", "off", "over", "why", "said", "say", "says", "going", "gonna", "make", "made",
-        // Roman Urdu
-        "aur", "hai", "hain", "tha", "thi", "the", "nahi", "nahin", "kya", "kyun", "kaise", "mein", "main", "mujhe", "mera",
-        "meri", "mere", "tum", "aap", "yeh", "woh", "bhi", "toh", "phir", "kuch", "bas", "abhi", "raha", "rahi", "rahe",
-        "hoon", "hun", "ho", "ko", "se", "ka", "ki", "ke", "par", "pe", "yaar", "acha", "accha", "theek", "haan",
     )
 
     /** His message's meaningful words, longest first (more specific), at most [MAX_TERMS]. */
