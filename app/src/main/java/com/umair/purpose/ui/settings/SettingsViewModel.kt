@@ -86,7 +86,7 @@ class SettingsViewModel @Inject constructor(
             settings = s,
             hasApiKey = hasKey,
             usage = totals,
-            cost = CostEstimator.estimate(byModel, s.ai.chatModel, s.chatPrices, s.ai.deepModel, s.deepPrices, s.pricing.offPeakFactor),
+            cost = CostEstimator.estimate(byModel, s.ai.chatModel, s.chatPrices, s.ai.deepModel, s.deepPrices, s.pricing.offPeakFactor, s.pricing.extra),
             backup = backup,
             breakdown = CostEstimator.breakdown(features, s.pricing),
             hasBackupKey = backupKey,

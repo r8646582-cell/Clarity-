@@ -148,6 +148,6 @@ class ChatRequests @Inject constructor(
 
     suspend fun monthCost(settings: AppSettings): Double = CostEstimator.estimate(
         usage.thisMonthByModel(), settings.ai.chatModel, settings.chatPrices, settings.ai.deepModel, settings.deepPrices,
-        settings.pricing.offPeakFactor,
+        settings.pricing.offPeakFactor, settings.pricing.extra,
     ).usd
 }

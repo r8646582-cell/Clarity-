@@ -98,8 +98,12 @@ object CostEstimator {
      * Prices usage by matching each model to the chat or deep model's prices.
      * [CostEstimate.complete] is false if some usage had no known price (it counts as 0).
      */
-    fun estimate(usage: List<ModelUsage>, chatModel: String, chat: Prices, deepModel: String, deep: Prices, offPeakFactor: Double = 1.0): CostEstimate {
-        val pricing = Pricing(chatModel, chat, deepModel, deep, offPeakFactor)
+    fun estimate(
+        usage: List<ModelUsage>, chatModel: String, chat: Prices, deepModel: String, deep: Prices, offPeakFactor: Double = 1.0,
+        /** Phase 5: prices he entered for the backup's or a custom model, so their usage is not counted as free. */
+        extra: Map<String, Prices> = emptyMap(),
+    ): CostEstimate {
+        val pricing = Pricing(chatModel, chat, deepModel, deep, offPeakFactor, extra)
         var usd = 0.0
         var complete = true
         for (u in usage) {

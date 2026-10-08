@@ -28,4 +28,14 @@ class CostEstimatorTest {
         assertEquals(1.0, e.usd, 1e-9)
         assertFalse(e.complete)
     }
+
+    @Test
+    fun `usage on a model he entered prices for is counted, not treated as free`() {
+        val usage = listOf(ModelUsage("claude-x", 1, 0, 1_000_000, 0))
+        val without = CostEstimator.estimate(usage, "flash", chat, "pro", deep)
+        assertFalse(without.complete)
+        val with = CostEstimator.estimate(usage, "flash", chat, "pro", deep, extra = mapOf("claude-x" to Prices(1.0, 3.0, 15.0)))
+        assertTrue(with.complete)
+        assertEquals(3.0, with.usd, 1e-9)
+    }
 }
