@@ -27,11 +27,18 @@ class SearchIndex @Inject constructor(
         embeddings?.requestSync()
     }
 
-    /** Embeds new documents; never throws and never blocks anything that matters. */
     /** Loads the embedding model in the background; harmless without one. */
     suspend fun warmUp() { runCatching { embeddings?.warmUp() } }
 
+    /** Embeds new documents now (launch only); writers use the background request instead. Never throws. */
     suspend fun syncEmbeddings() { runCatching { embeddings?.sync() } }
+
+    /** Live notes closest in meaning to [message], best first, with similarity. Empty without a model. Never throws. */
+    suspend fun relatedNotes(message: String): List<Pair<Long, Double>> =
+        runCatching { embeddings?.related(message)?.noteIds }.getOrNull().orEmpty()
+
+    /** A note was added or changed: its vector is refreshed soon. */
+    fun notesChanged() { embeddings?.requestSync() }
 
     private suspend fun rebuildDocs(zone: ZoneId) = db.withTransaction {
         dao.clear()
