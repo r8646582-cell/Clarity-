@@ -45,7 +45,7 @@ class PromiseRepository @Inject constructor(
      */
     suspend fun saveFromChat(line: ReplyMarkers.PromiseLine, sessionId: Long?, messageId: Long?, zone: ZoneId, now: Long): Promise? {
         val open = dao.open()
-        val duplicate = open.firstOrNull { !it.offTheRecord && ReflectionPlanner.samePromise(it.text, line.text) }
+        val duplicate = open.firstOrNull { it.offTheRecord == (sessionId == null) && ReflectionPlanner.samePromise(it.text, line.text) }
         // A time already past (agreed at 9:05 for 9:00) goes off straight away, never silently dropped.
         val remindAt = line.remindAt?.atZone(zone)?.toInstant()?.toEpochMilli()?.let { PromiseRules.reminderTime(it, now, justAgreed = true) }
         if (duplicate != null) {
