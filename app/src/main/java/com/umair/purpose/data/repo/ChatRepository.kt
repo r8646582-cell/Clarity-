@@ -298,6 +298,9 @@ class ChatRepository @Inject constructor(
             f.deleteBehavior(sessionId)
             f.deleteQuotes(sessionId)
             f.deleteIdeas(sessionId)
+            f.deleteDisagreements(sessionId)
+            f.deleteContradictions(sessionId)
+            f.deleteActionLog(sessionId)
             f.deleteStrengths(sessionId)
             val ids = f.promiseIds(sessionId)
             f.deletePromises(sessionId)
@@ -328,6 +331,7 @@ class ChatRepository @Inject constructor(
             db.customJourneyDao().clear()
             db.chapterDao().clear(); db.milestoneDao().clear(); db.branchDao().clear()
             db.journeyAdjustmentDao().clear(); db.usageMonthDao().clear()
+            db.disagreementDao().clear(); db.contradictionDao().clear(); db.actionLogDao().clear()
             db.searchDao().clear()
             db.errorDao().clear()
             // His saved prompt files are his data too, and "Erase everything" says all of it goes.

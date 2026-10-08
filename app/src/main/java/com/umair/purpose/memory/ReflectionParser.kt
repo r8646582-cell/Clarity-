@@ -30,7 +30,17 @@ data class ReflectionResult(
     @SerialName("ideas_used") val ideasUsed: List<String> = emptyList(),
     /** Which "getting to know you" steps this conversation covered in real depth (UPDATE-12). */
     @SerialName("onboarding_covered") val onboardingCovered: List<String> = emptyList(),
+    /** Phase 3: where Purpose and he see something differently. His side is checked word for word before storing. */
+    val disagreements: List<DisagreementUpdate> = emptyList(),
+    /** Phase 3: two of his own statements that do not fit. Both are checked word for word before storing. */
+    val contradictions: List<ContradictionUpdate> = emptyList(),
 ) {
+    @Serializable
+    data class DisagreementUpdate(val claim: String = "", @SerialName("his_position") val hisPosition: String = "")
+
+    @Serializable
+    data class ContradictionUpdate(@SerialName("quote_a") val quoteA: String = "", @SerialName("quote_b") val quoteB: String = "")
+
     @Serializable
     data class ProfileUpdate(val key: String = "", val value: String = "")
 

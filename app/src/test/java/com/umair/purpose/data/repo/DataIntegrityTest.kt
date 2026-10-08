@@ -41,7 +41,7 @@ class DataIntegrityTest {
 
     @Test fun `journey action receipts reflect persisted advancement and reject replays`() = runBlocking {
         val journeys = JourneyRepository(db, smartMock(), smartMock())
-        val executor = ActionExecutor(journeys, promises, memory, smartMock(), smartMock(), smartMock())
+        val executor = ActionExecutor(journeys, promises, memory, smartMock(), smartMock(), smartMock(), smartMock())
         val now = java.time.ZonedDateTime.of(2026, 10, 6, 12, 0, 0, 0, zone).toInstant().toEpochMilli()
         val session = Session(id = 1, startedAt = now, mode = "journey", modeDetail = "Test journey", journeyDay = 1)
         val action = listOf(ToolCall(action = "advance_journey"))
@@ -136,7 +136,7 @@ class DataIntegrityTest {
     }
 
     @Test fun `off record tools cannot alter saved promises or journeys`() = runBlocking {
-        val executor = ActionExecutor(smartMock(), promises, memory, smartMock(), smartMock(), smartMock())
+        val executor = ActionExecutor(smartMock(), promises, memory, smartMock(), smartMock(), smartMock(), smartMock())
         val p = Promise(id = 1, text = "Read the chapter", createdAt = 10, status = Promise.OPEN, sourceSessionId = null)
         db.promiseDao().insert(p)
         val actions = listOf(
@@ -251,7 +251,7 @@ class DataIntegrityTest {
     @Test fun `chat tool keeps due clock and a local reschedule uses Karachi time`() = runBlocking {
         val localZone = ZoneId.of("Asia/Karachi")
         val now = java.time.ZonedDateTime.of(2026, 10, 6, 2, 19, 0, 0, localZone).toInstant().toEpochMilli()
-        val executor = ActionExecutor(smartMock(), promises, memory, smartMock(), smartMock(), smartMock())
+        val executor = ActionExecutor(smartMock(), promises, memory, smartMock(), smartMock(), smartMock(), smartMock())
         val session = Session(id = 1, startedAt = now)
         db.sessionDao().insert(session)
         val first = executor.execute(listOf(ToolCall(action = "record_promise", title = "Sleep", due = "today 02:20", remind = "today 02:20")), session, 1, localZone, now)
@@ -350,7 +350,7 @@ class DataIntegrityTest {
     }
 
     @Test fun `duplicate actions in one reply execute only once`() = runBlocking {
-        val executor = ActionExecutor(smartMock(), promises, memory, smartMock(), smartMock(), smartMock())
+        val executor = ActionExecutor(smartMock(), promises, memory, smartMock(), smartMock(), smartMock(), smartMock())
         val call = ToolCall(action = "store_memory", insight = "Walking clears your head", category = "what_helps")
         assertEquals(1, executor.execute(listOf(call, call), Session(id = 1, startedAt = 1), 1, zone, 100).size)
         assertEquals(1, db.noteDao().all().single().timesSeen)

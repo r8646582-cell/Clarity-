@@ -69,6 +69,10 @@ data class BackupData(
     val branches: List<com.umair.purpose.data.db.Branch> = emptyList(),
     val journeyAdjustments: List<com.umair.purpose.data.db.JourneyAdjustment> = emptyList(),
     val usageMonths: List<com.umair.purpose.data.db.UsageMonth> = emptyList(),
+    /** Phase 3 ledgers. An older backup simply has none. */
+    val disagreements: List<com.umair.purpose.data.db.Disagreement> = emptyList(),
+    val contradictions: List<com.umair.purpose.data.db.Contradiction> = emptyList(),
+    val actionLog: List<com.umair.purpose.data.db.ActionLog> = emptyList(),
     /** Format 1 only. */
     val reports: List<LegacyReport> = emptyList(),
 ) {

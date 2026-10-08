@@ -164,6 +164,10 @@ interface MessageDao {
     @Query("SELECT * FROM message ORDER BY id")
     suspend fun all(): List<Message>
 
+    /** Phase 3: his newest written messages from conversations that are remembered, to find where he said something. */
+    @Query("SELECT m.* FROM message m JOIN session s ON s.id = m.sessionId WHERE m.role = 'user' AND s.offTheRecord = 0 AND m.createdAt <= :until ORDER BY m.createdAt DESC LIMIT 2000")
+    suspend fun userMessagesUntil(until: Long): List<Message>
+
     @Query("SELECT * FROM message WHERE id = :id")
     suspend fun get(id: Long): Message?
 
@@ -676,6 +680,9 @@ interface ForgetDao {
     @Query("DELETE FROM behavior_event WHERE sessionId = :id") suspend fun deleteBehavior(id: Long)
     @Query("DELETE FROM quote WHERE sessionId = :id") suspend fun deleteQuotes(id: Long)
     @Query("DELETE FROM idea_used WHERE sessionId = :id") suspend fun deleteIdeas(id: Long)
+    @Query("DELETE FROM disagreement WHERE sessionId = :id") suspend fun deleteDisagreements(id: Long)
+    @Query("DELETE FROM contradiction WHERE sessionId = :id OR sessionIdA = :id") suspend fun deleteContradictions(id: Long)
+    @Query("DELETE FROM action_log WHERE sessionId = :id") suspend fun deleteActionLog(id: Long)
     @Query("DELETE FROM strength WHERE sessionId = :id") suspend fun deleteStrengths(id: Long)
     @Query("SELECT id FROM promise WHERE sourceSessionId = :id") suspend fun promiseIds(id: Long): List<Long>
     @Query("DELETE FROM promise WHERE sourceSessionId = :id") suspend fun deletePromises(id: Long)
@@ -774,4 +781,41 @@ interface SearchDao {
     /** Every document, for computing embeddings (Phase 2). */
     @Query("SELECT kind, refId, day, text FROM search_doc")
     suspend fun allDocs(): List<SearchHit>
+}
+
+/** Phase 3 ledgers. */
+@Dao
+interface DisagreementDao {
+    @Insert suspend fun insert(rows: List<Disagreement>)
+    @Query("SELECT * FROM disagreement ORDER BY raisedAt, id") suspend fun all(): List<Disagreement>
+    @Query("SELECT * FROM disagreement WHERE resolved = 0 ORDER BY raisedAt DESC, id DESC") suspend fun open(): List<Disagreement>
+    @Query("UPDATE disagreement SET resolved = 1, resolvedAt = :now WHERE id = :id") suspend fun resolve(id: Long, now: Long)
+    @Query("DELETE FROM disagreement") suspend fun clear()
+}
+
+@Dao
+interface ContradictionDao {
+    @Insert suspend fun insert(rows: List<Contradiction>)
+    @Query("SELECT * FROM contradiction ORDER BY statedAtB, id") suspend fun all(): List<Contradiction>
+    @Query("SELECT * FROM contradiction WHERE status = 'open' ORDER BY statedAtB DESC, id DESC") suspend fun open(): List<Contradiction>
+    @Query("UPDATE contradiction SET status = 'explained', explanation = :explanation, resolvedAt = :now WHERE id = :id")
+    suspend fun explain(id: Long, explanation: String?, now: Long)
+    @Query("DELETE FROM contradiction") suspend fun clear()
+}
+
+@Dao
+interface ActionLogDao {
+    @Insert suspend fun insert(row: ActionLog): Long
+    @Insert suspend fun insertAll(rows: List<ActionLog>)
+    @Query("SELECT * FROM action_log WHERE turnId = :turnId AND dedupeKey = :key ORDER BY id DESC LIMIT 1")
+    suspend fun find(turnId: Long, key: String): ActionLog?
+    @Query("UPDATE action_log SET status = :status, detail = :detail, attempts = :attempts, updatedAt = :now WHERE id = :id")
+    suspend fun update(id: Long, status: String, detail: String?, attempts: Int, now: Long)
+    @Query("SELECT * FROM action_log WHERE status != 'ok' ORDER BY id") suspend fun unfinished(): List<ActionLog>
+    @Query("SELECT * FROM action_log ORDER BY id") suspend fun all(): List<ActionLog>
+    @Query("SELECT * FROM action_log ORDER BY id DESC LIMIT :limit") suspend fun recent(limit: Int): List<ActionLog>
+    /** Keeps the journal small: old finished rows go, anything unfinished stays. */
+    @Query("DELETE FROM action_log WHERE status = 'ok' AND id NOT IN (SELECT id FROM action_log ORDER BY id DESC LIMIT 2000)")
+    suspend fun trim()
+    @Query("DELETE FROM action_log") suspend fun clear()
 }

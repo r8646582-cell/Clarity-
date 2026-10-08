@@ -13,8 +13,38 @@ object Migrations {
     val ALL: Array<Migration> by lazy {
         arrayOf(
             MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-            MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12,
+            MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13,
         )
+    }
+
+    /**
+     * Phase 3: the disagreement ledger, the contradiction register and the durable action journal. Only adds three
+     * tables and their indexes; nothing existing is touched.
+     */
+    val MIGRATION_12_13 = object : Migration(12, 13) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `disagreement` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`sessionId` INTEGER NOT NULL, `claim` TEXT NOT NULL, `hisPosition` TEXT NOT NULL, " +
+                    "`raisedAt` INTEGER NOT NULL, `resolved` INTEGER NOT NULL, `resolvedAt` INTEGER)"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_disagreement_sessionId` ON `disagreement` (`sessionId`)")
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `contradiction` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`sessionId` INTEGER NOT NULL, `sessionIdA` INTEGER NOT NULL, `quoteA` TEXT NOT NULL, `quoteB` TEXT NOT NULL, " +
+                    "`statedAtA` INTEGER NOT NULL, `statedAtB` INTEGER NOT NULL, `status` TEXT NOT NULL, " +
+                    "`explanation` TEXT, `createdAt` INTEGER NOT NULL, `resolvedAt` INTEGER)"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_contradiction_sessionId` ON `contradiction` (`sessionId`)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_contradiction_sessionIdA` ON `contradiction` (`sessionIdA`)")
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `action_log` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "`sessionId` INTEGER, `turnId` INTEGER NOT NULL, `kind` TEXT NOT NULL, `dedupeKey` TEXT NOT NULL, " +
+                    "`argsJson` TEXT NOT NULL, `status` TEXT NOT NULL, `detail` TEXT, `attempts` INTEGER NOT NULL, " +
+                    "`createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)"
+            )
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_action_log_turnId` ON `action_log` (`turnId`)")
+        }
     }
 
     /** The old DeepSeek prices (USD per 1M tokens), replaced in 8 → 9 only where he never changed them. */

@@ -54,6 +54,8 @@ Before anything else, fill "observations": up to 8 short items, each with an exa
 - significance: 1-5. How much this conversation mattered to his inner life (1 = small talk or logistics, 3 = real issue explored, 5 = a breakthrough or a turning point). Letters use this to pick which conversations to read in full.
 - tone: one or two plain words for how he seemed overall (e.g. "low, self-critical", "hopeful").
 - his_words: up to 2 things he said in this conversation that capture something important about him (a value, a fear, a turning point, a contradiction), copied EXACTLY, character for character, from his own messages. The app discards any quote that is not found word for word in what he wrote, so never paraphrase. Empty list if nothing stood out.
+- disagreements: only when Purpose and he plainly see something differently and he held his ground in this conversation. "claim" is Purpose's view in one plain sentence; "his_position" is what he said back, copied EXACTLY, character for character, from his own messages (the app discards it otherwise). Not for mere questions, and never for something he agreed with. Empty list if none.
+- contradictions: only two things HE said that cannot both be fully true, each copied EXACTLY from his own messages (one may be from this conversation and the other from an earlier one shown in CONTEXT). Both quotes must be his words, never Purpose's. Skip anything he already explained, and skip competing values that are not really in conflict. Empty list if none.
 - ideas_used: short tags for the wisdom, frameworks, metaphors or traditions Purpose used in this conversation (e.g. "Stoic dichotomy of control", "two arrows", "if-then plan", "mental contrasting"). This stops Purpose repeating itself.
 
 ## Output
@@ -84,5 +86,7 @@ Return ONLY a valid JSON object in exactly this shape. No markdown, no code fenc
   "significance": 3,
   "tone": "...",
   "his_words": ["..."],
+  "disagreements": [{"claim": "...", "his_position": "exact words from his messages"}],
+  "contradictions": [{"quote_a": "exact words", "quote_b": "exact words"}],
   "ideas_used": ["..."]
 }

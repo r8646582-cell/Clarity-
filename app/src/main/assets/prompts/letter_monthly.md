@@ -12,6 +12,7 @@ You will receive:
 - PROMISES IN THIS PERIOD (with what happened and lessons): {{PROMISES}}
 - BEHAVIOR EVENTS IN THIS PERIOD: {{BEHAVIOR_EVENTS}}
 - WHAT THE RECORD SHOWS (promise stats, trends): {{RECORD}}
+  It may include values-versus-kept-promises numbers and open disagreements or contradictions. Those were counted or verified in code: use only the numbers given, describe the gap plainly without guessing why, and say a value has no record yet when it says so.
 - THINGS HE SAID THAT MATTERED (exact quotes, dated): {{HIS_WORDS}}
 - THE WEEKLY LETTERS FROM THIS PERIOD (or, for a yearly letter, the monthly letters): {{SUB_LETTERS}}
 - SESSION SUMMARIES (dated, with significance and tone): {{SUMMARIES}}

@@ -18,8 +18,10 @@ import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
         Chapter::class, Milestone::class, Branch::class, JourneyAdjustment::class, UsageMonth::class, SearchDoc::class,
         // Phase 2
         EmbeddingRow::class,
+        // Phase 3 ledgers
+        Disagreement::class, Contradiction::class, ActionLog::class,
     ],
-    version = 12,
+    version = 13,
     exportSchema = true,
 )
 abstract class PurposeDatabase : RoomDatabase() {
@@ -55,6 +57,9 @@ abstract class PurposeDatabase : RoomDatabase() {
     abstract fun usageMonthDao(): UsageMonthDao
     abstract fun searchDao(): SearchDao
     abstract fun embeddingDao(): EmbeddingDao
+    abstract fun disagreementDao(): DisagreementDao
+    abstract fun contradictionDao(): ContradictionDao
+    abstract fun actionLogDao(): ActionLogDao
 
     companion object {
         /**

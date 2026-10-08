@@ -617,3 +617,73 @@ data class Branch(
     val name: String,
     val createdAt: Long,
 )
+
+/**
+ * Phase 3: a "you and I see this differently" item. [claim] is the coach's view, kept only as context and never as
+ * evidence about him; [hisPosition] is his own words, verified word for word before it is stored.
+ */
+@Serializable
+@Entity(tableName = "disagreement", indices = [Index("sessionId")])
+data class Disagreement(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val sessionId: Long,
+    val claim: String,
+    val hisPosition: String,
+    val raisedAt: Long,
+    val resolved: Boolean = false,
+    val resolvedAt: Long? = null,
+)
+
+/** Phase 3: two statements of his own that do not fit, both quoted verbatim, oldest first. */
+@Serializable
+@Entity(tableName = "contradiction", indices = [Index("sessionId"), Index("sessionIdA")])
+data class Contradiction(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    /** The conversation of the later statement. */
+    val sessionId: Long,
+    /** The conversation of the earlier statement, so forgetting either conversation removes the pair. */
+    val sessionIdA: Long,
+    val quoteA: String,
+    val quoteB: String,
+    val statedAtA: Long,
+    val statedAtB: Long,
+    /** open | explained */
+    val status: String = OPEN,
+    /** His own explanation, when he gave one. */
+    val explanation: String? = null,
+    val createdAt: Long,
+    val resolvedAt: Long? = null,
+) {
+    companion object {
+        const val OPEN = "open"
+        const val EXPLAINED = "explained"
+    }
+}
+
+/**
+ * Phase 3: every coach action, logged with the turn it came from, so a failed or duplicated action can be audited
+ * or replayed. [argsJson] is the action as asked, [status] is pending until it finishes.
+ */
+@Serializable
+@Entity(tableName = "action_log", indices = [Index("turnId")])
+data class ActionLog(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val sessionId: Long? = null,
+    /** The coach message (turn) the action was asked for in. */
+    val turnId: Long,
+    val kind: String,
+    val dedupeKey: String,
+    val argsJson: String,
+    /** pending | ok | failed */
+    val status: String = PENDING,
+    val detail: String? = null,
+    val attempts: Int = 1,
+    val createdAt: Long,
+    val updatedAt: Long,
+) {
+    companion object {
+        const val PENDING = "pending"
+        const val OK = "ok"
+        const val FAILED = "failed"
+    }
+}

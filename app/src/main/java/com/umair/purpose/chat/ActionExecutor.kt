@@ -1,12 +1,14 @@
 package com.umair.purpose.chat
 
 import com.umair.purpose.data.db.Session
+import com.umair.purpose.data.repo.ActionJournal
 import com.umair.purpose.data.repo.JourneyRepository
 import com.umair.purpose.data.repo.MemoryRepository
 import com.umair.purpose.data.repo.PromiseRepository
 import com.umair.purpose.data.repo.UiPrefs
 import com.umair.purpose.dev.ErrorLogger
 import com.umair.purpose.growth.GrowthEngine
+import com.umair.purpose.ledger.ActionJournalRules
 import com.umair.purpose.journey.CustomDraft
 import com.umair.purpose.journey.JourneyStep
 import com.umair.purpose.promise.PromiseTimes
@@ -40,9 +42,44 @@ class ActionExecutor @Inject constructor(
     private val growth: GrowthEngine,
     private val uiPrefs: UiPrefs,
     private val errors: ErrorLogger,
+    private val journal: ActionJournal,
 ) {
     suspend fun execute(actions: List<ToolCall>, session: Session, messageId: Long, zone: ZoneId, now: Long): List<ActionReceipt> =
-        actions.distinct().mapNotNull { action -> run(action, session, messageId, zone, now) }
+        actions.distinct().mapNotNull { action -> journaled(action, session, messageId, zone, now) }
+
+    /**
+     * Phase 3: writes the action into the durable journal before it runs and closes the row after. An action
+     * already done on this turn is not run again; a failed one is retried a few times. The journal can never break
+     * an action: if it is unavailable the action runs un-journaled, as before. Off the record keeps nothing.
+     */
+    private suspend fun journaled(action: ToolCall, session: Session, messageId: Long, zone: ZoneId, now: Long): ActionReceipt? {
+        if (session.offTheRecord) return run(action, session, messageId, zone, now)
+        val ticket = try {
+            journal.begin(action, session.id, messageId, now)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            errors.log("action_journal", e)
+            null
+        }
+        if (ticket != null && ticket.decision != ActionJournalRules.Decision.RUN) return null
+        val receipt = try {
+            run(action, session, messageId, zone, now)
+        } catch (e: CancellationException) {
+            // Left pending on purpose: the journal shows an action that started and never finished.
+            throw e
+        }
+        if (ticket != null) {
+            try {
+                journal.finish(ticket, receipt?.ok ?: true, receipt?.detail ?: "no_receipt", now)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                errors.log("action_journal", e)
+            }
+        }
+        return receipt
+    }
 
     private suspend fun run(action: ToolCall, session: Session, messageId: Long, zone: ZoneId, now: Long): ActionReceipt? {
         if (session.offTheRecord && action.kind !in setOf("record_promise", "set_pacing", "set_cadence")) {

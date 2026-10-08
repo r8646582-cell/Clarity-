@@ -17,6 +17,8 @@ import com.umair.purpose.memory.Memory
 import com.umair.purpose.memory.MemorySnapshot
 import com.umair.purpose.memory.Provenance
 import com.umair.purpose.memory.RecordStats
+import com.umair.purpose.ledger.LedgerRules
+import com.umair.purpose.ledger.ValuesLedger
 import com.umair.purpose.memory.ReflectionPlanner
 import com.umair.purpose.memory.ReflectionResult
 import com.umair.purpose.memory.RelevantMemories
@@ -43,6 +45,7 @@ class MemoryRepository @Inject constructor(
     private val areas = db.areaDao()
     private val sessions = db.sessionDao()
     private val strengths = db.strengthDao()
+    private val ledger = LedgerRepository(db)
     private val behavior = db.behaviorDao()
 
     init {
@@ -80,8 +83,24 @@ class MemoryRepository @Inject constructor(
         ideas = db.ideaDao().recent(200),
     )
 
-    suspend fun record(today: LocalDate, zone: ZoneId): List<String> =
-        RecordStats.lines(promises.all(), sessions.all(), db.pulseDao().all(), today, zone)
+    /**
+     * "What the record shows": counted in code, never by the model. Phase 3 adds the values ledger and the open
+     * disagreements and contradictions, so the chat context and every letter receive the computed numbers.
+     */
+    suspend fun record(today: LocalDate, zone: ZoneId): List<String> {
+        val all = promises.all()
+        val stats = RecordStats.lines(all, sessions.all(), db.pulseDao().all(), today, zone)
+        // The ledgers are extra: a problem reading them must never take the rest of the record down with it.
+        val ledgers = try {
+            ValuesLedger.lines(ValuesLedger.compute(onboarding.values(), all, today, zone)) +
+                ledger.lines { ContextFormatter.date(it, zone).toString() }
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            emptyList()
+        }
+        return stats + ledgers
+    }
 
     /** Mutable facts override the session's cached snapshot, including explicit absence after deletion. */
     suspend fun currentChatState(today: LocalDate): String = buildString {
@@ -173,6 +192,13 @@ class MemoryRepository @Inject constructor(
         val quotes = plan.quotes.filter { it.text.trim().lowercase() !in earlierQuotes }
         if (quotes.isNotEmpty()) db.quoteDao().insert(quotes)
         if (plan.ideas.isNotEmpty()) db.ideaDao().insert(plan.ideas)
+        // Phase 3: kept only when his side is found word for word in what he wrote.
+        ledger.applyProposed(
+            sessionId,
+            result.disagreements.map { LedgerRules.ProposedDisagreement(it.claim, it.hisPosition) },
+            result.contradictions.map { LedgerRules.ProposedContradiction(it.quoteA, it.quoteB) },
+            now,
+        )
         sessions.markReflected(sessionId, plan.summary, plan.significance, plan.tone, upToMessageId)
         plan.title?.let { sessions.setTitleFromReflection(sessionId, it) }
         // Promises that closed: their reminders must go.

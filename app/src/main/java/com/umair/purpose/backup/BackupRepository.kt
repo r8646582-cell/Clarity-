@@ -90,6 +90,9 @@ class BackupRepository @Inject constructor(
                 branches = db.branchDao().all(),
                 journeyAdjustments = db.journeyAdjustmentDao().all(),
                 usageMonths = db.usageMonthDao().all(),
+                disagreements = db.disagreementDao().all(),
+                contradictions = db.contradictionDao().all(),
+                actionLog = db.actionLogDao().all(),
                 schemaVersion = SCHEMA_VERSION,
             )
         }
@@ -152,6 +155,9 @@ class BackupRepository @Inject constructor(
             db.branchDao().clear(); db.branchDao().insertAll(data.branches)
             db.journeyAdjustmentDao().clear(); db.journeyAdjustmentDao().insertAll(data.journeyAdjustments)
             db.usageMonthDao().clear(); db.usageMonthDao().upsert(data.usageMonths)
+            db.disagreementDao().clear(); db.disagreementDao().insert(data.disagreements)
+            db.contradictionDao().clear(); db.contradictionDao().insert(data.contradictions)
+            db.actionLogDao().clear(); db.actionLogDao().insertAll(data.actionLog)
             // Prompt edits come back too, and a restore replaces them like every other table: without the clear,
             // upserting only added to whatever was already on the device, so the "Edited" state afterwards did
             // not match the backup (and an older backup could never remove a newer edit).
@@ -172,6 +178,6 @@ class BackupRepository @Inject constructor(
 
     companion object {
         /** Keep in step with @Database(version) in PurposeDatabase. */
-        const val SCHEMA_VERSION = 10
+        const val SCHEMA_VERSION = 13
     }
 }

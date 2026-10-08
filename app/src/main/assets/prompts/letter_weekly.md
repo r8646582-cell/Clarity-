@@ -12,6 +12,7 @@ You will receive:
 - PROMISES MADE, KEPT, BROKEN OR OPEN THIS WEEK (with what happened and lessons): {{PROMISES}}
 - BEHAVIOR EVENTS THIS WEEK: {{BEHAVIOR_EVENTS}}
 - WHAT THE RECORD SHOWS (promise stats): {{RECORD}}
+  It may include values-versus-kept-promises numbers and open disagreements or contradictions. Those were counted or verified in code: use only the numbers given, describe the gap plainly without guessing why, and say a value has no record yet when it says so.
 - LAST WEEK'S LETTER (for continuity; may be empty): {{PREVIOUS_LETTER}}
 - IDEAS USED RECENTLY (don't repeat these): {{RECENT_IDEAS}}
 - THIS WEEK'S CONVERSATIONS (full transcripts, or summaries for lighter ones): {{TRANSCRIPTS}}

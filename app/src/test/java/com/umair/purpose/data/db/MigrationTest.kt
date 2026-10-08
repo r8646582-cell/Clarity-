@@ -28,7 +28,7 @@ import java.sql.ResultSet
  */
 class MigrationTest {
     private val dir = File("schemas/com.umair.purpose.data.db.PurposeDatabase")
-    private val latest = 12
+    private val latest = 13
     private val conns = mutableListOf<Connection>()
 
     @After
@@ -108,6 +108,17 @@ class MigrationTest {
         // The archive index works.
         exec(db, "INSERT INTO search_doc (kind, refId, day, text) VALUES ('summary', '1', '2026-10-01', 'Talked about FAR and Abbu')")
         assertEquals("1", one(db, "SELECT refId FROM search_doc WHERE search_doc MATCH 'abbu'"))
+    }
+
+    @Test
+    fun `12 to 13 adds the ledger tables and keeps his data`() {
+        val db = create(12)
+        exec(db, "INSERT INTO session (id, startedAt, reflected, userMessageCount, titleByUser) VALUES (1, 100, 1, 2, 0)")
+        exec(db, "INSERT INTO promise (id, text, createdAt, status, sourceSessionId) VALUES (1, 'Walk 20 minutes', 102, 'kept', 1)")
+        migrate(db, 12, 13)
+        assertSchema(db, schema(13), "12 → 13")
+        assertEquals("Walk 20 minutes", one(db, "SELECT text FROM promise WHERE id = 1"))
+        for (t in listOf("disagreement", "contradiction", "action_log")) assertEquals("0", one(db, "SELECT COUNT(*) FROM `$t`"))
     }
 
     @Test
