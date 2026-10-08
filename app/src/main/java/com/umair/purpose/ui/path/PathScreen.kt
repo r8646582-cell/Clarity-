@@ -136,7 +136,7 @@ fun PathScreen(onOpenTalk: () -> Unit, onOpenTree: () -> Unit, vm: PathViewModel
                 item { TreePreview(tree, onOpenTree) }
                 item {
                     JourneySection(
-                        state, onStartStep = { vm.startTodaysStep(onOpenTalk) }, onStop = vm::stopJourney,
+                        state, onStartStep = { vm.startTodaysStep(onOpenTalk) }, onMarkDone = vm::markTodaysStepDone, onStop = vm::stopJourney,
                         onPick = { pickJourney = true }, onResume = vm::resumeJourney,
                     )
                 }
@@ -234,7 +234,7 @@ private fun TreePreview(g: com.umair.purpose.growth.TreeGeometry?, onOpen: () ->
 }
 
 @Composable
-private fun JourneySection(state: PathUiState, onStartStep: () -> Unit, onStop: () -> Unit, onPick: () -> Unit, onResume: () -> Unit) {
+private fun JourneySection(state: PathUiState, onStartStep: () -> Unit, onMarkDone: () -> Unit, onStop: () -> Unit, onPick: () -> Unit, onResume: () -> Unit) {
     val j = state.journey
     val plan = state.plan
     if (j == null || plan == null) {
@@ -268,7 +268,11 @@ private fun JourneySection(state: PathUiState, onStartStep: () -> Unit, onStop: 
         // UPDATE-18: why the plan changed, in his words' register.
         state.adjustment?.let { Meta(it, Modifier.padding(top = 4.dp)) }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (state.stepToday) TextAction("Start today's step", onStartStep)
+            if (state.stepToday) {
+                TextAction("Start today's step", onStartStep)
+                Spacer(Modifier.width(16.dp))
+                TextAction("I did it", onMarkDone, color = Purpose.colors.textMuted)
+            }
             Spacer(Modifier.weight(1f))
             TextAction("Stop journey", onStop, color = Purpose.colors.textMuted)
         }

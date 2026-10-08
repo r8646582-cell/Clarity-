@@ -1,12 +1,15 @@
-﻿name: CI
+name: CI
 
 # Compiles the app and runs the unit tests on every push to a work branch.
 # Prints the Room schema files at the end so migrations can be checked against them.
 on:
   push:
-    branches: [main]
   workflow_dispatch:
   pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -48,6 +51,8 @@ jobs:
           if-no-files-found: error
 
   smoke:
+    # Slow emulator run: only on main or when started by hand from the Actions tab.
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 35

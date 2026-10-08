@@ -37,3 +37,11 @@ Removed the Roman Urdu stop words from `RelevantMemories.STOP` and `ruko|bas` fr
 Memory exam retrieval is unchanged (70.8). Dropping feel/want/need/think/know from STOP scored slightly worse (70.8 -> 69.9), so they stay.
 NOT done yet: hybrid embeddings retrieval, bitemporal facts (valid_from/valid_to + migration). Not compiled here: the Android toolchain
 cannot be downloaded in this environment, so the two Kotlin edits above are untested by Gradle.
+
+## Phase 0 (BLUEPRINT-V3)
+- CI run on GitHub (`./gradlew :app:testDebugUnitTest`, then `:app:assembleRelease`): both green on the V2 code with no fixes needed. No compile errors from the removed SafetyNet/HelpNumbers, `Settings(...)` or `MemoryRepository(...)` call sites.
+- CI now runs on every branch push and cancels superseded runs; the emulator smoke job runs only on main or by hand.
+- Journey deferral checked in code: ending a conversation never completes a day, only `advance_journey` does, the prompts forbid emitting it when he defers, and a testbench scenario covers it.
+- Added a manual "I did it" action on the Path screen as the stall fallback. It uses the same one-step-a-day rule as `advance_journey`, and the coach's next context line says today's step is done.
+- Still needs a device: defer day 1 and confirm it stays open, then do a real step and confirm the coach completes it.
+- Smoke test fix: the Android 35 emulator job failed with `adb: device offline` (no app crash in the log). `smoke.sh` now waits for the device and retries the "is it running" check.

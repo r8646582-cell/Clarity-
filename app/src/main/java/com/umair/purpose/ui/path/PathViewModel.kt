@@ -119,6 +119,15 @@ class PathViewModel @Inject constructor(
         then()
     }
 
+    /**
+     * Phase 0 fallback: he says he did today's step. His own tap is evidence; the coach sees "today's step is done"
+     * in its next context line. Same one-step-a-day rule as the coach's advance_journey.
+     */
+    fun markTodaysStepDone() = launch {
+        val j = journeys.active() ?: return@launch
+        journeys.advance(j.name, j.currentDay, LocalDate.now())
+    }
+
     private fun launch(block: suspend () -> Unit) {
         viewModelScope.launch { block() }
     }
