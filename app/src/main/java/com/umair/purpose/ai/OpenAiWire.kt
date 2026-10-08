@@ -104,7 +104,7 @@ object OpenAiWire {
     /** Parses one streamed `chat.completion.chunk`. Reasoning text is never kept; only the answer is shown. */
     fun parseStreamChunk(payload: String): StreamChunk {
         val obj = json.parseToJsonElement(payload).jsonObject
-        obj["error"]?.let { e ->
+        obj["error"]?.takeIf { it !is kotlinx.serialization.json.JsonNull }?.let { e ->
             val message = (e as? JsonObject)?.get("message")?.jsonPrimitiveOrNull()?.contentOrNull
                 ?: e.jsonPrimitiveOrNull()?.contentOrNull
             return StreamChunk(null, null, error = message ?: "The provider sent an error")

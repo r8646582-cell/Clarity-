@@ -109,4 +109,10 @@ class ReplyMarkersTest {
         org.junit.Assert.assertEquals(0, out.failures)
         org.junit.Assert.assertEquals(1, ReplyMarkers.parse("[[mode: invented_mode]]").failures)
     }
+
+    @Test
+    fun `a finished reply keeps a trailing less-than sign that only hides while streaming`() {
+        assertEquals("Flights <", ReplyMarkers.parse("Flights <").visible)
+        assertEquals("Flights", ReplyMarkers.visibleWhileStreaming("Flights <"))
+    }
 }

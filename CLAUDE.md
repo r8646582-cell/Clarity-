@@ -541,13 +541,13 @@ The worker sends the session transcript + current context to `prompts/reflection
   "area_status": [{"area": "studies_career", "status": "stuck", "note": "..."}],
   "behavior_events": [{"when": "...", "situation": "...", "feeling_before": "...", "action": "...", "payoff": "...", "outcome": "..."}],
   "strengths": ["..."],
-  "next_opening": "1-2 sentences to open the next session with",
   "significance": 3,
   "tone": "low, self-critical",
   "his_words": ["exact quote"],
   "ideas_used": ["Stoic dichotomy of control"]
 }
 ```
+(`next_opening` was removed: the home screen shows no AI-written opening line.) Phase 3 adds two optional keys, `disagreements` and `contradictions`; code stores one only when his side is found word for word in what he wrote.
 Validate the JSON; on parse failure retry once with a "return valid JSON only" nudge, then mark for retry later.
 Apply updates in a single DB transaction.
 
@@ -575,7 +575,7 @@ via {{LETTER_KIND}}). Use the stronger model. Output is plain text; its first li
 - **Settings**: API key, provider/model, tough-love level, encrypted backup export/import (passphrase).
 
 ## Prompt files (`app/src/main/assets/prompts/`)
-Supplied by Umair: `examples.md`, `testbench.md`, `gardening.md`, `persona.md`, `reflection.md`, `letter_weekly.md`, `letter_monthly.md`, `snapshot.md`,
+(Blueprint V3 rewrote the 18 prompts with his approval; see CHANGES-v2.md.) Supplied by Umair: `examples.md`, `testbench.md`, `gardening.md`, `persona.md`, `reflection.md`, `letter_weekly.md`, `letter_monthly.md`, `snapshot.md`,
 `journeys.md`, and `mode_*.md`. Do not edit them.
 If you think a prompt needs a change, propose it in plain language and wait for his OK.
 The code fills the `{{PLACEHOLDERS}}` in these files at runtime.
@@ -601,3 +601,28 @@ The repo starts with only this file, `README.md`, `.gitignore`, and the prompt f
 
 ## Current plan
 See BLUEPRINT-V3.md for the phased build plan. Read it before making changes.
+
+## Blueprint V3 additions (Phases 0 to 6): what the code now does
+This section is the current truth where it differs from older text above.
+- **Evidence rules.** Only his own words and actions are evidence. A coach claim never raises confidence or times-seen
+  (`MemoryRepository.synthesizeMemory`). A journey day, promise or step is complete only when he did it or the coach
+  records it with an action. Quotes shown as his words are verified verbatim (`memory/QuoteCheck.kt`).
+- **Retrieval (Phase 2).** FTS4 plus on-device embeddings (all-MiniLM-L6-v2 through ONNX Runtime, Apache-2.0, see
+  `docs/EMBEDDING_MODEL.md`), merged by rank fusion and reranked by recency and evidence grade. Embeddings only find
+  and flag; they never write memory or change confidence. Notes and profile lines are bitemporal (`validFrom`,
+  `validTo`, `recordedAt`); a changed fact is retired, not deleted, and shows as "used to be true".
+- **Ledgers (Phase 3), all counted in code.** Values-versus-kept-promises per week (`ledger/ValuesLedger`), the
+  disagreement ledger and contradiction register (`ledger/LedgerRules`), and a durable action journal (`action_log`,
+  `ActionJournal`). They reach the chat context and letters through `MemoryRepository.record()` / `{{RECORD}}`.
+- **Phone screen time (Phase 4, opt-in, off by default).** `PACKAGE_USAGE_STATS` usage access, minutes per day, hour and
+  app category only (never app names), stored in the encrypted DB (`screen_usage`), viewable, exportable and deletable;
+  turning it off deletes it. Two summary lines go to the AI provider with the rest of the context.
+- **Per-job models (Phase 5).** Reflection, letters, chapters, gardening and snapshot each have a model choice
+  (`job_model` table, `ai/JobModels`); no row means the main deep model, as before. Chat keeps its Fast/Deep routing.
+  Settings shows each job's cost and a projection on the chosen model's entered prices.
+- **Database and backups.** Room version 15 (migrations 1 to 15, schemas exported, `MigrationTest`). Backups are
+  `PURPOSE1 | salt | iterations | iv | AES-256-GCM(gzip(json))` with the key from PBKDF2-HMAC-SHA256 at **600,000
+  iterations** (OWASP's current figure; Phase 6). The iteration count is stored in the file header, so backups made at the
+  older 210,000 still restore, and new backups use the new count: that is the migration path. The database key itself
+  is 32 random bytes held in the Keystore, not derived from a passphrase, so it needs no iteration count.
+- **Scoreboard.** `tools/eval/` (offline, not in the APK) scores the test bench, a memory exam and honesty checks.

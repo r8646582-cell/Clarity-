@@ -23,7 +23,12 @@ class ScreenTimeCollector @Inject constructor(@ApplicationContext private val co
         val ops = context.getSystemService(Context.APP_OPS_SERVICE) as? AppOpsManager ?: return false
         @Suppress("DEPRECATION")
         val mode = ops.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), context.packageName)
-        return mode == AppOpsManager.MODE_ALLOWED
+        // Some Android versions answer MODE_DEFAULT while the permission itself is granted in Settings.
+        return if (mode == AppOpsManager.MODE_DEFAULT) {
+            context.checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        } else {
+            mode == AppOpsManager.MODE_ALLOWED
+        }
     }
 
     /** The system screen where he grants or revokes usage access. */

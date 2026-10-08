@@ -31,6 +31,17 @@ All of Purpose's prompts are plain text files in `app/src/main/assets/prompts/` 
 reflection, letters, snapshot, journeys, modes, gardening, test bench, custom journeys). The app reads them at
 runtime and fills in the `{{PLACEHOLDERS}}`.
 
+## What it does under the hood (short)
+- **Memory** is graded by evidence: only your own words and actions raise confidence. Retrieval combines keyword search
+  with an on-device MiniLM model (no data leaves the phone for it). Facts that stop being true are retired, not erased.
+- **Ledgers** compare what you said you value with what you did (promises kept per week), track where you and the coach
+  disagree, and keep contradictions in your own words. Code counts; the model only describes.
+- **Phone screen time** is opt-in, off by default, minutes per category only, deletable in one tap.
+- **Slow jobs** (reflection, letters, chapters, gardening, snapshot) can each use their own model; chat keeps Fast/Deep.
+- **Backups** are encrypted with a key from your passphrase (PBKDF2-HMAC-SHA256, 600,000 iterations; older backups at
+  210,000 still restore).
+- **Scoreboard:** `python3 tools/eval/score.py` (see `tools/eval/README.md`) measures whether a change helped.
+
 ## Developer menu
 Settings → Advanced → **Developer** (the last row). It has:
 - **Health check**: green, amber or red for reflection, letters, gardening, reminders, battery, failed jobs,

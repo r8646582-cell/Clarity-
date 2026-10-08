@@ -43,6 +43,15 @@
         <intent>
             <action android:name="android.intent.action.DIAL" />
         </intent>
+        <!--
+          Phase 4: Android 11+ hides other apps from getApplicationInfo unless they are declared here. Apps with a
+          launcher icon are the ones he actually opens; this is narrower than QUERY_ALL_PACKAGES. Without it every
+          app would be filed as "other" and the screen-time categories would be empty.
+        -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
     </queries>
 
     <application

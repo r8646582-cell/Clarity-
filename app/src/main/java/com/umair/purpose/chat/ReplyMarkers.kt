@@ -57,13 +57,14 @@ object ReplyMarkers {
     }
 
     /** Where hidden content begins: the earliest of `[[`, `<<<`, or a dangling `<`/`<<` at the very end. */
-    private fun hiddenStart(text: String): Int {
+    private fun hiddenStart(text: String, streaming: Boolean = true): Int {
         var cut = text.length
         val brackets = text.indexOf("[[")
         if (brackets in 0 until cut) cut = brackets
         val tool = text.indexOf("<<<")
         if (tool in 0 until cut) cut = tool
-        if (cut == text.length) {
+        // A lone trailing `<` only hides while streaming (it might become `<<<`); a finished reply keeps it.
+        if (streaming && cut == text.length) {
             var i = text.length
             while (i > 0 && text[i - 1] == '<') i--
             if (text.length - i in 1..2) cut = i
@@ -110,7 +111,7 @@ object ReplyMarkers {
         // Anything unclosed from a hidden marker on is hidden too, as it was while streaming. Action ranges were
         // already cut out of [scanned], so this only removes the generic `[[…]]` lines and any dangling marker.
         val withoutBlocks = BLOCK.replace(scanned, "")
-        val visible = withoutBlocks.substring(0, hiddenStart(withoutBlocks)).lines().joinToString("\n") { it.trimEnd() }.trim()
+        val visible = withoutBlocks.substring(0, hiddenStart(withoutBlocks, streaming = false)).lines().joinToString("\n") { it.trimEnd() }.trim()
         return Parsed(visible, promises, mode, failures, practiceWith, stepsDone, actions)
     }
 

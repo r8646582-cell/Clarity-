@@ -147,4 +147,11 @@ class OpenAiWireTest {
         }.exceptionOrNull()
         assertTrue(error is AiException)
     }
+
+    @Test
+    fun `a null error field is not an error`() {
+        val chunk = OpenAiWire.parseStreamChunk("""{"error":null,"choices":[{"delta":{"content":"hi"}}]}""")
+        assertNull(chunk.error)
+        assertEquals("hi", chunk.delta)
+    }
 }
