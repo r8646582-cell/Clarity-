@@ -770,4 +770,8 @@ interface SearchDao {
      */
     @Query("SELECT kind, refId, day, text FROM search_doc WHERE search_doc MATCH :query ORDER BY day DESC LIMIT :limit")
     suspend fun search(query: String, limit: Int): List<SearchHit>
+
+    /** Every document, for computing embeddings (Phase 2). */
+    @Query("SELECT kind, refId, day, text FROM search_doc")
+    suspend fun allDocs(): List<SearchHit>
 }

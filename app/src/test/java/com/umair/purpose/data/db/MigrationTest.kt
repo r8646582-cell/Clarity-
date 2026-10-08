@@ -28,7 +28,7 @@ import java.sql.ResultSet
  */
 class MigrationTest {
     private val dir = File("schemas/com.umair.purpose.data.db.PurposeDatabase")
-    private val latest = 11
+    private val latest = 12
     private val conns = mutableListOf<Connection>()
 
     @After

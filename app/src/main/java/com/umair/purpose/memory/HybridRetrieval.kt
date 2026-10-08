@@ -8,6 +8,10 @@ import kotlin.math.sqrt
  * "no embedding available" and callers fall back to full-text search alone.
  */
 interface Embedder {
+    /** Names the model and its settings; stored vectors from another id are recomputed. */
+    val id: String
+
+    /** A unit-length vector, or null when no model is available or it failed. Never throws. */
     fun embed(text: String): FloatArray?
 }
 

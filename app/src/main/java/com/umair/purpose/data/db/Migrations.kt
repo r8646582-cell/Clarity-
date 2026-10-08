@@ -13,7 +13,7 @@ object Migrations {
     val ALL: Array<Migration> by lazy {
         arrayOf(
             MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-            MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11,
+            MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12,
         )
     }
 
@@ -26,6 +26,19 @@ object Migrations {
     private const val BAD_HIT = 0.014
     private const val BAD_MISS = 0.44
     private const val BAD_OUT = 1.32
+
+    /**
+     * Phase 2, embeddings: one vector per archive search document, so related material can be found by meaning.
+     * Derived data: it can be dropped and recomputed from the search documents at any time. Only adds a table.
+     */
+    val MIGRATION_11_12 = object : Migration(11, 12) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `embedding_row` (`kind` TEXT NOT NULL, `refId` TEXT NOT NULL, " +
+                    "`model` TEXT NOT NULL, `textHash` TEXT NOT NULL, `vector` BLOB NOT NULL, PRIMARY KEY(`kind`, `refId`))"
+            )
+        }
+    }
 
     /**
      * Phase 2, bitemporal facts: when a note or profile line was recorded, when it started being true and when it

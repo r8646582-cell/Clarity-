@@ -14,11 +14,23 @@ import javax.inject.Singleton
  * from them, so after a restore, a forgotten conversation or "Erase everything" it's simply rebuilt.
  */
 @Singleton
-class SearchIndex @Inject constructor(private val db: PurposeDatabase) {
+class SearchIndex @Inject constructor(
+    private val db: PurposeDatabase,
+    /** Phase 2: meaning-based search beside the full-text index. Null (as in older tests) = full-text only. */
+    private val embeddings: EmbeddingIndex? = null,
+) {
     private val dao = db.searchDao()
 
     /** Everything, from scratch, in one transaction. A few thousand rows a year: quick, and only run rarely. */
-    suspend fun rebuild(zone: ZoneId = ZoneId.systemDefault()) = db.withTransaction {
+    suspend fun rebuild(zone: ZoneId = ZoneId.systemDefault()) {
+        rebuildDocs(zone)
+        syncEmbeddings()
+    }
+
+    /** Embeds new documents; never throws and never blocks anything that matters. */
+    suspend fun syncEmbeddings() { runCatching { embeddings?.sync() } }
+
+    private suspend fun rebuildDocs(zone: ZoneId) = db.withTransaction {
         dao.clear()
         val docs = buildList {
             db.sessionDao().all().mapNotNullTo(this) { SearchDocs.summary(it, zone) }
@@ -34,7 +46,12 @@ class SearchIndex @Inject constructor(private val db: PurposeDatabase) {
     }
 
     /** After a reflection: that conversation's summary, quotes and moments. */
-    suspend fun indexSession(sessionId: Long, zone: ZoneId = ZoneId.systemDefault()) = db.withTransaction {
+    suspend fun indexSession(sessionId: Long, zone: ZoneId = ZoneId.systemDefault()) {
+        indexSessionDocs(sessionId, zone)
+        syncEmbeddings()
+    }
+
+    private suspend fun indexSessionDocs(sessionId: Long, zone: ZoneId) = db.withTransaction {
         val s = db.sessionDao().get(sessionId) ?: return@withTransaction
         dao.delete(SearchDocs.SUMMARY, sessionId.toString())
         val docs = buildList {
@@ -51,15 +68,22 @@ class SearchIndex @Inject constructor(private val db: PurposeDatabase) {
     suspend fun indexLetter(l: Letter) {
         dao.delete(SearchDocs.LETTER, l.id.toString())
         dao.insert(listOf(SearchDocs.letter(l)))
+        syncEmbeddings()
     }
 
     suspend fun indexChapter(c: Chapter) {
         dao.delete(SearchDocs.CHAPTER, c.id.toString())
         dao.insert(listOf(SearchDocs.chapter(c)))
+        syncEmbeddings()
     }
 
     /** After gardening or a cap: archived memory becomes searchable. */
-    suspend fun indexArchive(zone: ZoneId = ZoneId.systemDefault()) = db.withTransaction {
+    suspend fun indexArchive(zone: ZoneId = ZoneId.systemDefault()) {
+        indexArchiveDocs(zone)
+        syncEmbeddings()
+    }
+
+    private suspend fun indexArchiveDocs(zone: ZoneId) = db.withTransaction {
         val docs: List<SearchDoc> = buildList {
             db.noteDao().all().mapNotNullTo(this) { SearchDocs.retiredNote(it, zone) }
             db.profileDao().all().mapNotNullTo(this) { SearchDocs.retiredProfile(it, zone) }
@@ -76,7 +100,10 @@ class SearchIndex @Inject constructor(private val db: PurposeDatabase) {
     /** The strongest few matches for his message, or nothing. Never throws: search is a bonus, never a blocker. */
     suspend fun relevant(message: String, currentSession: Long?): String? = runCatching {
         val terms = RelevantMemories.terms(message)
-        val q = RelevantMemories.matchQuery(terms) ?: return null
-        RelevantMemories.block(RelevantMemories.rank(dao.search(q, RelevantMemories.CANDIDATES), terms, currentSession))
+        val lexical = RelevantMemories.matchQuery(terms)?.let { dao.search(it, RelevantMemories.CANDIDATES) }.orEmpty()
+        // Meaning matches are a bonus: any failure leaves the full-text result.
+        val semantic = runCatching { embeddings?.nearest(message) }.getOrNull().orEmpty()
+        if (terms.isEmpty() && semantic.isEmpty()) return null
+        RelevantMemories.block(RelevantMemories.rankHybrid(lexical, semantic, terms, currentSession))
     }.getOrNull()
 }

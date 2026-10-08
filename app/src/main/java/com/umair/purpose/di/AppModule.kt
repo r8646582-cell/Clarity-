@@ -39,6 +39,12 @@ object AppModule {
             db.datasetWork.onReplaced { active.stopViewing() }
         }
 
+    /** Phase 2: the on-device embedding model. Without its asset files it returns no vectors and search stays full-text. */
+    @Provides
+    @Singleton
+    fun embedder(@ApplicationContext context: Context): com.umair.purpose.memory.Embedder =
+        com.umair.purpose.memory.OnnxEmbedder(context)
+
     @Provides
     @Singleton
     fun okHttp(): OkHttpClient = OkHttpClient.Builder()

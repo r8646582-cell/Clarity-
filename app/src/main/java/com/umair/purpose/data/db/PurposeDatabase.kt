@@ -16,8 +16,10 @@ import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
         PromptOverride::class, CustomJourney::class,
         // UPDATE-15 to 18
         Chapter::class, Milestone::class, Branch::class, JourneyAdjustment::class, UsageMonth::class, SearchDoc::class,
+        // Phase 2
+        EmbeddingRow::class,
     ],
-    version = 11,
+    version = 12,
     exportSchema = true,
 )
 abstract class PurposeDatabase : RoomDatabase() {
@@ -52,6 +54,7 @@ abstract class PurposeDatabase : RoomDatabase() {
     abstract fun journeyAdjustmentDao(): JourneyAdjustmentDao
     abstract fun usageMonthDao(): UsageMonthDao
     abstract fun searchDao(): SearchDao
+    abstract fun embeddingDao(): EmbeddingDao
 
     companion object {
         /**

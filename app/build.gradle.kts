@@ -86,6 +86,8 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.sqlcipher.android)
+    // Phase 2: on-device embeddings (MIT). Runs the bundled all-MiniLM-L6-v2 model.
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.19.2")
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

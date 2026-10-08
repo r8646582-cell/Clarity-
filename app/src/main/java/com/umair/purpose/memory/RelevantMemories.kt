@@ -61,7 +61,7 @@ object RelevantMemories {
      * means at least two of his words, or the only one when he used just one meaningful word. [excludeSession]: the
      * conversation he's in (it's already in front of the coach).
      */
-    fun rank(hits: List<SearchHit>, terms: List<String>, excludeSession: Long?): List<SearchHit> {
+    fun rank(hits: List<SearchHit>, terms: List<String>, excludeSession: Long?, limit: Int = MAX_RESULTS): List<SearchHit> {
         if (terms.isEmpty()) return emptyList()
         val need = if (terms.size == 1) 1 else 2
         return hits.asSequence()
@@ -71,9 +71,38 @@ object RelevantMemories {
             .sortedWith(compareByDescending<Pair<SearchHit, Int>> { it.second }.thenByDescending { it.first.day })
             .map { it.first }
             .distinctBy { it.text.trim().lowercase() }
-            .take(MAX_RESULTS)
+            .take(limit)
             .toList()
     }
+
+    /**
+     * Phase 2: full-text matches and meaning matches, merged by reciprocal rank fusion and then nudged by recency.
+     * The lexical list is exactly what [rank] would return before its cut-off; the meaning list adds documents that
+     * share no words with the message. With no meaning matches (no model) this is [rank], unchanged.
+     */
+    fun rankHybrid(
+        lexical: List<SearchHit>, semantic: List<Pair<SearchHit, Double>>, terms: List<String>, excludeSession: Long?,
+        zone: ZoneId = ZoneId.systemDefault(),
+    ): List<SearchHit> {
+        if (semantic.isEmpty()) return rank(lexical, terms, excludeSession)
+        fun id(h: SearchHit) = "${h.kind}|${h.refId}"
+        val byId = LinkedHashMap<String, SearchHit>()
+        val lexIds = rank(lexical, terms, excludeSession, limit = Int.MAX_VALUE).onEach { byId.putIfAbsent(id(it), it) }.map(::id)
+        val semIds = semantic.map { it.first }
+            .filter { excludeSession == null || sessionOf(it) != excludeSession }
+            .onEach { byId.putIfAbsent(id(it), it) }.map(::id)
+        val fused = HybridRetrieval.fuse(listOf(lexIds, semIds))
+        val ranked = HybridRetrieval.rerank(fused.map { (key, score) ->
+            val h = byId.getValue(key)
+            HybridRetrieval.Candidate(key, score, dayMillis(h.day, zone))
+        }, System.currentTimeMillis())
+        return ranked.map { byId.getValue(it.id) }
+            .distinctBy { it.text.trim().lowercase() }
+            .take(MAX_RESULTS)
+    }
+
+    private fun dayMillis(day: String, zone: ZoneId): Long =
+        runCatching { java.time.LocalDate.parse(day).atStartOfDay(zone).toInstant().toEpochMilli() }.getOrDefault(0L)
 
     fun score(text: String, terms: List<String>): Int {
         val words = Regex("""[\p{L}\p{N}]+""").findAll(text.lowercase()).map { it.value }.toList()

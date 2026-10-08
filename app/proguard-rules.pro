@@ -17,3 +17,7 @@
 
 # Stack traces in the local crash log stay readable enough to act on.
 -keepattributes SourceFile, LineNumberTable
+
+# ONNX Runtime (Phase 2 embeddings): native code looks these classes up by name.
+-keep class ai.onnxruntime.** { *; }
+-dontwarn ai.onnxruntime.**
