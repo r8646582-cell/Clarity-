@@ -19,6 +19,7 @@ import com.umair.purpose.memory.Provenance
 import com.umair.purpose.memory.RecordStats
 import com.umair.purpose.ledger.LedgerRules
 import com.umair.purpose.ledger.ValuesLedger
+import com.umair.purpose.screen.ScreenLedger
 import com.umair.purpose.memory.ReflectionPlanner
 import com.umair.purpose.memory.ReflectionResult
 import com.umair.purpose.memory.RelevantMemories
@@ -93,7 +94,8 @@ class MemoryRepository @Inject constructor(
         // The ledgers are extra: a problem reading them must never take the rest of the record down with it.
         val ledgers = try {
             ValuesLedger.lines(ValuesLedger.compute(onboarding.values(), all, today, zone)) +
-                ledger.lines { ContextFormatter.date(it, zone).toString() }
+                ledger.lines { ContextFormatter.date(it, zone).toString() } +
+                ScreenLedger.lines(all, db.screenUsageDao().since(today.minusWeeks(ScreenLedger.WEEKS.toLong()).minusDays(7).toString()), today, zone)
         } catch (e: kotlin.coroutines.cancellation.CancellationException) {
             throw e
         } catch (e: Exception) {

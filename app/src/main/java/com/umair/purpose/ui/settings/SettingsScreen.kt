@@ -117,6 +117,7 @@ fun SettingsScreen(
                     )
                 }
             }
+            ScreenTimeSection()
             KeepReliableSection()
             BackupSection(state.backup, onExport = vm::export, onImport = vm::restore, onDismissStatus = vm::clearBackupStatus) { passphrase ->
                 AutoBackupRows(s?.autoBackup == true, passphrase, vm)

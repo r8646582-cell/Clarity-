@@ -39,6 +39,11 @@ class UiPrefs @Inject constructor(@ApplicationContext context: Context) {
         get() = prefs.getBoolean(KEY_ASKED_NOTIFY, false)
         set(v) = prefs.edit().putBoolean(KEY_ASKED_NOTIFY, v).apply()
 
+    /** Phase 4: he turned on phone screen-time tracking. Off by default; a restore or erase turns it off again. */
+    var screenTimeEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SCREEN_TIME, false)
+        set(v) = prefs.edit().putBoolean(KEY_SCREEN_TIME, v).apply()
+
     /** When the last automatic backup was written (epoch millis), or 0. */
     var lastBackupAt: Long
         get() = prefs.getLong(KEY_LAST_BACKUP, 0L)
@@ -190,7 +195,7 @@ class UiPrefs @Inject constructor(@ApplicationContext context: Context) {
         val editor = prefs.edit()
         listOf(KEY_DISMISSED, KEY_LETTER_DELAYED, KEY_STEP_DONE, KEY_REFL_GIVE_UP, KEY_MORNING,
             KEY_SUGGEST, KEY_SUGGEST_AT, KEY_SUGGEST_DONE, KEY_GARDEN_10, KEY_GARDEN_12, KEY_GARDEN_15,
-            KEY_ONBOARDING_RECHECK).forEach(editor::remove)
+            KEY_ONBOARDING_RECHECK, KEY_SCREEN_TIME).forEach(editor::remove)
         prefs.all.keys.filter { it.startsWith("refl_fail_") || it.startsWith("job_") }.forEach(editor::remove)
         editor.apply()
         _dismissed.value = emptySet()
@@ -199,6 +204,7 @@ class UiPrefs @Inject constructor(@ApplicationContext context: Context) {
     }
 
     private companion object {
+        const val KEY_SCREEN_TIME = "screen_time_enabled"
         const val KEY_DISMISSED = "dismissed_cards"
         const val KEY_ASKED_NOTIFY = "asked_notify"
         const val KEY_LAST_BACKUP = "last_backup"

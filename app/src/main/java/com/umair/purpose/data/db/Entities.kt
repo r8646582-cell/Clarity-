@@ -687,3 +687,20 @@ data class ActionLog(
         const val FAILED = "failed"
     }
 }
+
+/**
+ * Phase 4 (opt-in, off by default): minutes of phone use per local day, hour and app category, measured by the
+ * phone's own usage stats. Never which app, never content. Stored in the encrypted database; he can view, export
+ * and delete all of it.
+ */
+@Serializable
+@Entity(tableName = "screen_usage", primaryKeys = ["date", "hour", "category"])
+data class ScreenUsage(
+    /** Local "yyyy-MM-dd". */
+    val date: String,
+    /** 0 to 23, local time. */
+    val hour: Int,
+    /** game | audio | video | image | social | news | maps | productivity | other */
+    val category: String,
+    val minutes: Int,
+)

@@ -66,6 +66,8 @@ class PurposeApp : Application() {
                 val s = settings.get()
                 if (s.autoBackup && !s.backupFolder.isNullOrBlank()) work.setAutoBackup(true)
             }
+            // Phase 4: the opt-in screen-time job survives restarts; nothing is scheduled while it is off.
+            runCatching { work.setScreenTime(uiPrefs.screenTimeEnabled) }
             promises.rescheduleReminders()
             // UPDATE-16: messages written offline go out as soon as there's a connection.
             offlineQueue.start()

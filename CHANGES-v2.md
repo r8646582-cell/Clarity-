@@ -82,3 +82,13 @@ Not built on a device or with the Android toolchain (no SDK here). The pure logi
 - `ActionExecutor` gained a constructor parameter (`ActionJournal`); the four test call sites were updated.
 
 Not done in this phase: a UI to mark a disagreement resolved or a contradiction explained (the repository methods exist), and phone/behavior data in the values ledger (Phase 4).
+
+# Phase 4: objective behavior data (opt-in)
+Same caveat as Phase 3: no Android SDK here. The pure logic (`screen/ScreenTimeAggregator`, `ScreenLedger`, 10 tests) compiled and passed on a plain JVM; the Room, WorkManager, manifest and Compose parts are unbuilt, so run `./gradlew testDebugUnitTest assembleDebug`.
+
+- **Screen time only, for now.** Android `UsageStatsManager` foreground events become minutes per local day, hour and app category (social, video, game, ...). Package names are mapped to a category immediately and never stored or logged. Calendar and sleep via Health Connect (the "optionally" in the blueprint) are not built.
+- **Off by default, explained in Settings** ("Phone screen time"). Turning it on opens Android's own usage-access screen (`PACKAGE_USAGE_STATS`, which only he can grant); a daily local worker copies the last 2 days; the card shows each state. Turning it **off deletes everything collected** (confirmation first). Also: View (last 14 days), Export CSV, Delete all. A restore or Erase everything switches it off again (`UiPrefs.datasetReplaced`).
+- **Stored** in new table `screen_usage` (date, hour, category, minutes) in the encrypted database: DB 14, `MIGRATION_13_14`, `MigrationTest` extended, `14.json` hand-made (Room will rewrite it). Included in backups (optional field, schema 14), in "Export my life" (Markdown + JSON) and cleared by Erase everything. Kept about two years.
+- **Values ledger**: `MemoryRepository.record()` now also adds (only when data exists) a weekly average-minutes-per-day line and a "phone time in the hour a promise was due, kept versus broken" line, with counts. Numbers only; they reach the chat context and the letters through the existing `{{RECORD}}`.
+- **Privacy note:** the records never leave the phone, but those two summary lines are sent to the AI provider with the rest of the context, like every other ledger line. The Settings text says so.
+- Not done: Health Connect (sleep, calendar), a screen-time chart, hour-level "phone away at 5" promise parsing beyond a promise's due time.

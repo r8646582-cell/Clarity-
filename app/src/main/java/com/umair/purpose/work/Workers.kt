@@ -44,6 +44,7 @@ interface WorkerEntryPoint {
     fun journeyAdapter(): com.umair.purpose.journey.JourneyAdapter
     fun promiseRepository(): com.umair.purpose.data.repo.PromiseRepository
     fun memoryRepository(): com.umair.purpose.data.repo.MemoryRepository
+    fun screenTime(): com.umair.purpose.data.repo.ScreenTimeRepository
 }
 
 private fun Context.entryPoint() = EntryPointAccessors.fromApplication(applicationContext, WorkerEntryPoint::class.java)
@@ -276,6 +277,25 @@ class GrowthWorker(context: Context, params: WorkerParameters) : CoroutineWorker
         } catch (e: Exception) {
             if (e !is CancellationException) ep.uiPrefs().recordJob("milestones", ok = false)
             failed("milestone", e, ep.errors())
+        }
+    }
+}
+
+/**
+ * Phase 4: once a day, copies the last two days of phone use (minutes per hour and app category) into the local
+ * database. Does nothing unless he switched it on and granted usage access; no network, no AI.
+ */
+class ScreenTimeWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+    override suspend fun doWork(): Result = applicationContext.entryPoint().database().datasetWork.withWriter { workForCurrentDataset() }
+
+    private suspend fun workForCurrentDataset(): Result {
+        val ep = applicationContext.entryPoint()
+        if (!ep.uiPrefs().screenTimeEnabled) return Result.success()
+        return try {
+            ep.screenTime().sync(System.currentTimeMillis(), java.time.ZoneId.systemDefault())
+            Result.success()
+        } catch (e: Exception) {
+            failed("screen_time", e, ep.errors())
         }
     }
 }

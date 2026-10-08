@@ -132,6 +132,23 @@ class WorkScheduler @Inject constructor(@ApplicationContext context: Context) {
         wm.enqueueUniquePeriodicWork(AUTO_BACKUP, ExistingPeriodicWorkPolicy.KEEP, request)
     }
 
+    /** Phase 4: the daily screen-time copy, on only while he has it switched on. Local only, no network. */
+    fun setScreenTime(on: Boolean) {
+        if (!on) {
+            wm.cancelUniqueWork(SCREEN_TIME)
+            return
+        }
+        val request = PeriodicWorkRequestBuilder<ScreenTimeWorker>(1, TimeUnit.DAYS)
+            .setConstraints(Constraints.Builder().setRequiresBatteryNotLow(true).build())
+            .build()
+        wm.enqueueUniquePeriodicWork(SCREEN_TIME, ExistingPeriodicWorkPolicy.KEEP, request)
+    }
+
+    /** One copy right now, for when he has just switched it on. */
+    fun screenTimeNow() {
+        wm.enqueueUniqueWork(SCREEN_TIME_NOW, ExistingWorkPolicy.KEEP, OneTimeWorkRequestBuilder<ScreenTimeWorker>().build())
+    }
+
     /** "Back up now" from Settings, through the same job. */
     fun backupNow() {
         wm.enqueueUniqueWork(BACKUP_NOW, ExistingWorkPolicy.KEEP, OneTimeWorkRequestBuilder<BackupWorker>().build())
@@ -198,6 +215,8 @@ class WorkScheduler @Inject constructor(@ApplicationContext context: Context) {
         const val SNAPSHOT = "snapshot"
         const val GARDENING = "gardening"
         const val AUTO_BACKUP = "auto_backup"
+        const val SCREEN_TIME = "screen_time"
+        const val SCREEN_TIME_NOW = "screen_time_now"
         const val BACKUP_NOW = "backup_now"
         /** Renamed in 1.2.1 so the broken job saved under [OLD_MAINTENANCE] can be cancelled cleanly. */
         const val MAINTENANCE = "maintenance_v2"

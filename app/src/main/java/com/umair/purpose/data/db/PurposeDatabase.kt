@@ -20,8 +20,10 @@ import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
         EmbeddingRow::class,
         // Phase 3 ledgers
         Disagreement::class, Contradiction::class, ActionLog::class,
+        // Phase 4
+        ScreenUsage::class,
     ],
-    version = 13,
+    version = 14,
     exportSchema = true,
 )
 abstract class PurposeDatabase : RoomDatabase() {
@@ -60,6 +62,7 @@ abstract class PurposeDatabase : RoomDatabase() {
     abstract fun disagreementDao(): DisagreementDao
     abstract fun contradictionDao(): ContradictionDao
     abstract fun actionLogDao(): ActionLogDao
+    abstract fun screenUsageDao(): ScreenUsageDao
 
     companion object {
         /**

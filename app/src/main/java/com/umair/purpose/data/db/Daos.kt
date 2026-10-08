@@ -819,3 +819,15 @@ interface ActionLogDao {
     suspend fun trim()
     @Query("DELETE FROM action_log") suspend fun clear()
 }
+
+/** Phase 4: opt-in screen-time data. */
+@Dao
+interface ScreenUsageDao {
+    @Upsert suspend fun upsert(rows: List<ScreenUsage>)
+    @Query("DELETE FROM screen_usage WHERE date >= :from AND date <= :to") suspend fun clearRange(from: String, to: String)
+    @Query("SELECT * FROM screen_usage WHERE date >= :from ORDER BY date, hour, category") suspend fun since(from: String): List<ScreenUsage>
+    @Query("SELECT * FROM screen_usage ORDER BY date, hour, category") suspend fun all(): List<ScreenUsage>
+    @Query("SELECT COUNT(*) FROM screen_usage") suspend fun count(): Int
+    @Query("DELETE FROM screen_usage WHERE date < :oldest") suspend fun pruneBefore(oldest: String)
+    @Query("DELETE FROM screen_usage") suspend fun clear()
+}

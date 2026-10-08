@@ -73,6 +73,8 @@ data class BackupData(
     val disagreements: List<com.umair.purpose.data.db.Disagreement> = emptyList(),
     val contradictions: List<com.umair.purpose.data.db.Contradiction> = emptyList(),
     val actionLog: List<com.umair.purpose.data.db.ActionLog> = emptyList(),
+    /** Phase 4 opt-in screen time. An older backup simply has none. */
+    val screenUsage: List<com.umair.purpose.data.db.ScreenUsage> = emptyList(),
     /** Format 1 only. */
     val reports: List<LegacyReport> = emptyList(),
 ) {

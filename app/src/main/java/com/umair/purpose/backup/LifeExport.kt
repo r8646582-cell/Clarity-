@@ -122,6 +122,17 @@ object LifeExport {
                 }
             }
         }
+        if (data.screenUsage.isNotEmpty()) {
+            h(2, "Phone screen time (opt-in)")
+            line("Minutes of phone use per day by app category, measured by this phone. No app names, no content.")
+            line("")
+            data.screenUsage.groupBy { it.date }.toSortedMap().forEach { (date, rows) ->
+                line("- $date: ${rows.sumOf { it.minutes }} min (" +
+                    rows.groupBy { it.category }.mapValues { e -> e.value.sumOf { it.minutes } }.entries.sortedByDescending { it.value }
+                        .joinToString(", ") { "${it.key} ${it.value}" } + ")")
+            }
+            line("")
+        }
         if (promises.none { it.status == Promise.OPEN } && sessions.isEmpty() && profile.isEmpty()) line("(Nothing saved yet.)")
     }
 }
