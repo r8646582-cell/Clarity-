@@ -133,6 +133,8 @@ sealed interface TalkEvent {
 
 private data class Transient(
     val error: String? = null,
+    /** The conversation the error belongs to, so it is shown only there. */
+    val errorSessionId: Long? = null,
     val listenOnly: Boolean = false,
     /** Between tapping send and the reply engine taking over (so "No reply yet" never flashes). */
     val pending: Boolean = false,
@@ -284,7 +286,7 @@ class TalkViewModel @Inject constructor(
             session = s,
             messages = msgs,
             sending = replying,
-            error = t.error,
+            error = t.error.takeIf { t.errorSessionId == null || t.errorSessionId == s?.id },
             listenOnly = t.listenOnly,
             deep = replying && x.reply?.deep == true,
             hasApiKey = hasKey,
@@ -314,10 +316,12 @@ class TalkViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TalkUiState())
 
     init {
+        // Open across midnight: the day-based cards and journey step follow the calendar, not just onResume.
+        viewModelScope.launch { com.umair.purpose.time.calendarDays().collect { today.value = it } }
         viewModelScope.launch {
             engine.events.collect { e ->
                 when (e) {
-                    is ReplyEvent.Failed -> transient.update { it.copy(error = e.message) }
+                    is ReplyEvent.Failed -> transient.update { it.copy(error = e.message, errorSessionId = e.sessionId) }
                     ReplyEvent.WantsReminder -> if (!uiPrefs.askedNotificationPermission) {
                         uiPrefs.askedNotificationPermission = true
                         events.send(TalkEvent.AskNotificationPermission)
@@ -501,7 +505,7 @@ class TalkViewModel @Inject constructor(
                 val waiting = !connectivity.isOnline() || chat.messages(session.id).any { it.queued }
                 chat.addMessage(session.id, Message.ROLE_USER, content, now(), queued = waiting)
                 // The reply is made outside this screen, so leaving the app doesn't stop it.
-                if (!waiting) engine.start(session.id, listen)
+                if (!waiting) startReply(session.id, listen)
             } finally {
                 transient.update { it.copy(pending = false) }
             }
@@ -509,12 +513,23 @@ class TalkViewModel @Inject constructor(
         return true
     }
 
+    /** Starting can throw (a foreground-service restriction): say so quietly instead of crashing the screen. */
+    private fun startReply(sessionId: Long, listenOnly: Boolean, replacing: Long? = null) {
+        try {
+            engine.start(sessionId, listenOnly, replacing = replacing)
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            transient.update { it.copy(error = "Couldn't start that reply. Try again.", errorSessionId = sessionId) }
+        }
+    }
+
     /** No reply came (it failed before any words arrived): ask again. */
     fun retry() {
         if (engine.busy) return
         transient.update { it.copy(error = null) }
         val s = state.value.session ?: return
-        if (state.value.messages.lastOrNull()?.role == Message.ROLE_USER) engine.start(s.id, transient.value.listenOnly)
+        if (state.value.messages.lastOrNull()?.role == Message.ROLE_USER) startReply(s.id, transient.value.listenOnly)
     }
 
     /** "Try again" on an interrupted reply: regenerate it, replacing the partial one. */
@@ -523,7 +538,7 @@ class TalkViewModel @Inject constructor(
         transient.update { it.copy(error = null) }
         val s = state.value.session ?: return
         if (state.value.viewingPast) return
-        engine.start(s.id, transient.value.listenOnly, replacing = messageId)
+        startReply(s.id, transient.value.listenOnly, replacing = messageId)
     }
 
     /** "End": in every mode. Reading a past one, it only goes back to the current conversation. */

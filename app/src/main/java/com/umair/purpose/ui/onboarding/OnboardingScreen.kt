@@ -94,8 +94,10 @@ class OnboardingViewModel @Inject constructor(private val repo: OnboardingReposi
     fun begin() = launch { repo.markWelcomeSeen(now()) }
     fun saveValues(values: List<String>) = launch { repo.saveValues(values, now()) }
     fun saveBigFive(answers: List<Int>) = launch { repo.saveBigFive(answers, now()) }
-    fun skip(step: String) = launch {
+    /** [then] runs once the choice is saved, so leaving the screen can never beat the write (Talk would reopen it). */
+    fun skip(step: String, then: () -> Unit = {}) = launch {
         if (step == OnboardingSteps.WELCOME) repo.markWelcomeSeen(now()) else repo.skip(step, now())
+        then()
     }
 
     private fun launch(block: suspend () -> Unit) {
@@ -124,7 +126,7 @@ fun OnboardingScreen(onDone: () -> Unit, vm: OnboardingViewModel = hiltViewModel
 
     Box(Modifier.fillMaxSize().background(Purpose.colors.background).statusBarsPadding().navigationBarsPadding()) {
         when (stage) {
-            Stage.WELCOME -> Welcome(onBegin = vm::begin, onLater = { vm.skip(OnboardingSteps.WELCOME); onDone() })
+            Stage.WELCOME -> Welcome(onBegin = vm::begin, onLater = { vm.skip(OnboardingSteps.WELCOME) { onDone() } })
             Stage.VALUES -> valuesDraft?.let { draft ->
                 ValuesSort(draft, onDraft = vm::saveValuesDraft, onSave = vm::saveValues, onSkip = { vm.skip(OnboardingSteps.VALUES_SORT) })
             }

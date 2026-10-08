@@ -148,7 +148,7 @@ fun ConversationsDrawer(
     }
     forgetting?.let { c ->
         ConfirmDialog(
-            text = "Forget this conversation? It's deleted, with everything I learned only from it. This can't be undone.",
+            text = "Forget this conversation? It's deleted, with the notes, quotes, moments and promises I learned only from it. Letters, chapters and growth-tree leaves already written from it stay; delete those yourself if you want them gone. This can't be undone.",
             confirm = "Forget",
             onConfirm = { onForget(c.session.id); forgetting = null },
             onDismiss = { forgetting = null },

@@ -98,7 +98,11 @@ class SettingsViewModel @Inject constructor(
     /** [key] blank keeps the saved one. */
     fun saveBackupProvider(kind: String, baseUrl: String, key: String, chatModel: String, deepModel: String) {
         viewModelScope.launch {
+            // A key belongs to one kind of provider: switching kind without typing a new key must not send the old
+            // provider's key to the other one.
+            val kindChanged = repo.get().backupProvider?.kind?.let { it != kind } == true
             if (key.isNotBlank()) withContext(Dispatchers.IO) { secrets.setBackupApiKey(key) }
+            else if (kindChanged) withContext(Dispatchers.IO) { secrets.clearBackupApiKey() }
             backupKeySaved.value = secrets.backupApiKey() != null
             repo.update {
                 it.copy(backupProvider = com.umair.purpose.data.repo.BackupProvider(kind, baseUrl.trim(), chatModel.trim(), deepModel.trim().ifBlank { chatModel.trim() }))

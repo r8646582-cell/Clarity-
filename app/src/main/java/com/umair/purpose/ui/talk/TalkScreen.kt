@@ -186,6 +186,9 @@ fun TalkScreen(
     val onMic: () -> Unit = {
         if (listening) {
             voice.stop(); listening = false
+        } else if (!voice.available) {
+            // Common on phones without Google's speech service: say so instead of a mic that does nothing.
+            android.widget.Toast.makeText(context, "Voice typing isn't available on this phone.", android.widget.Toast.LENGTH_SHORT).show()
         } else if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             voice.start(voiceLanguage)
         } else {
@@ -601,7 +604,10 @@ private fun Conversation(
                 .coerceAtLeast(0)
         }
     }
-    LaunchedEffect(sendTick) { if (sendTick > 0) waitingForSent = true }
+    // Only a send made while THIS conversation is on screen counts: sends from an earlier one must not make a
+    // freshly opened conversation scroll as if he had just written.
+    val tickAtOpen = remember { sendTick }
+    LaunchedEffect(sendTick) { if (sendTick > tickAtOpen) waitingForSent = true }
     val newestUserKey = rows.lastOrNull { it is Row2.Msg && it.message.role == Message.ROLE_USER }?.key
     LaunchedEffect(newestUserKey) {
         if (!waitingForSent || newestUserKey == null) return@LaunchedEffect

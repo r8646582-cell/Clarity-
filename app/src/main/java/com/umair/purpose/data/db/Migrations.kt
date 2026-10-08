@@ -2,7 +2,6 @@ package com.umair.purpose.data.db
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.umair.purpose.ai.AiDefaults
 import com.umair.purpose.chat.Conversations
 
 /**
@@ -386,8 +385,9 @@ object Migrations {
             ).forEach { db.execSQL("ALTER TABLE `settings` ADD COLUMN $it") }
             // The old default chat temperature was 1.0; the new one is 0.7.
             db.execSQL("UPDATE `settings` SET `chatTemperature` = 0.7 WHERE `chatTemperature` = 1.0")
-            val c = AiDefaults.CHAT_PRICES
-            val d = AiDefaults.DEEP_PRICES
+            // Frozen copies: a migration must keep writing what it wrote then, even if the app's defaults change.
+            val c = com.umair.purpose.cost.Prices(cacheHit = 0.006, cacheMiss = 0.30, output = 1.20)
+            val d = com.umair.purpose.cost.Prices(cacheHit = 0.044, cacheMiss = 1.32, output = 3.96)
             db.execSQL(
                 "UPDATE `settings` SET `chatPriceCacheHit` = ${c.cacheHit}, `chatPriceCacheMiss` = ${c.cacheMiss}, " +
                     "`chatPriceOutput` = ${c.output} WHERE `chatPriceCacheMiss` = 0 AND `chatPriceOutput` = 0"
