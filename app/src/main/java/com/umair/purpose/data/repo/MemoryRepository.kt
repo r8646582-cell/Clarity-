@@ -205,6 +205,8 @@ class MemoryRepository @Inject constructor(
                 firstSeen = now,
                 lastSeen = now,
                 sourceSessionIds = sessionId?.toString().orEmpty(),
+                recordedAt = now,
+                validFrom = now,
             )
         }
         val absorbed = replacesIds.distinct().mapNotNull { notes.get(it) }
@@ -215,7 +217,7 @@ class MemoryRepository @Inject constructor(
         )
         val saved = if (combined.id == 0L) combined.copy(id = notes.insert(combined))
             else combined.also { notes.upsert(listOf(it)) }
-        if (absorbed.isNotEmpty()) notes.upsert(absorbed.map { it.copy(status = Note.RETIRED) })
+        if (absorbed.isNotEmpty()) notes.upsert(absorbed.map { it.retiredAt(now) })
         // Replacement archives become searchable immediately, without waiting for monthly gardening.
         if (absorbed.isNotEmpty()) search.indexArchive()
         saved
@@ -284,7 +286,7 @@ class MemoryRepository @Inject constructor(
             .filterValues { it.size > 1 }
             .forEach { (_, group) ->
                 val keeper = group.maxByOrNull { (rank[it.confidence] ?: 0) * 10_000 + it.timesSeen } ?: return@forEach
-                val retired = group.filter { it.id != keeper.id }.map { it.copy(status = Note.RETIRED) }
+                val retired = group.filter { it.id != keeper.id }.map { it.retiredAt(System.currentTimeMillis()) }
                 if (retired.isNotEmpty()) {
                     notes.upsert(retired + keeper.copy(
                         timesSeen = group.sumOf { it.timesSeen },

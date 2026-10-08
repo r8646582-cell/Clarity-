@@ -28,7 +28,7 @@ import java.sql.ResultSet
  */
 class MigrationTest {
     private val dir = File("schemas/com.umair.purpose.data.db.PurposeDatabase")
-    private val latest = 10
+    private val latest = 11
     private val conns = mutableListOf<Connection>()
 
     @After
@@ -143,6 +143,25 @@ class MigrationTest {
         assertEquals("Walk 20 minutes", one(db, "SELECT text FROM promise WHERE id = 1"))
         assertEquals("0", one(db, "SELECT offTheRecord FROM promise WHERE id = 1"))
         assertEquals("money|stuck|0|0", one(db, "SELECT area || '|' || status || '|' || editedByUser || '|' || deletedByUser FROM area_status"))
+    }
+
+    @Test
+    fun `10 to 11 backfills when facts were recorded and when retired ones stopped being true`() {
+        val db = create(10)
+        val note = "INSERT INTO note (id, type, text, confidence, status, timesSeen, firstSeen, lastSeen, editedByUser, sourceSessionIds) VALUES"
+        exec(db, "$note (1, 'pattern', 'Walks at dawn', 'likely', 'active', 2, 100, 500, 0, '')")
+        exec(db, "$note (2, 'thread', 'Job hunt', 'guess', 'retired', 1, 200, 600, 0, '')")
+        exec(db, "$note (3, 'thread', 'Exam', 'guess', 'resolved', 1, 300, 700, 0, '')")
+        val p = "INSERT INTO profile_entry (key, value, updatedAt, editedByUser, deletedByUser, sourceSessionIds, retired) VALUES"
+        exec(db, "$p ('city', 'Lahore', 900, 0, 0, '', 0)")
+        exec(db, "$p ('old', 'Student', 800, 0, 0, '', 1)")
+        migrate(db, 10, 11)
+        assertSchema(db, schema(11), "10 → 11")
+        assertEquals("100|100|null", one(db, "SELECT recordedAt || '|' || validFrom || '|' || ifnull(validTo, 'null') FROM note WHERE id = 1"))
+        assertEquals("200|200|600", one(db, "SELECT recordedAt || '|' || validFrom || '|' || ifnull(validTo, 'null') FROM note WHERE id = 2"))
+        assertEquals("300|300|700", one(db, "SELECT recordedAt || '|' || validFrom || '|' || ifnull(validTo, 'null') FROM note WHERE id = 3"))
+        assertEquals("900|900|null", one(db, "SELECT recordedAt || '|' || validFrom || '|' || ifnull(validTo, 'null') FROM profile_entry WHERE key = 'city'"))
+        assertEquals("800|800|800", one(db, "SELECT recordedAt || '|' || validFrom || '|' || ifnull(validTo, 'null') FROM profile_entry WHERE key = 'old'"))
     }
 
     /**

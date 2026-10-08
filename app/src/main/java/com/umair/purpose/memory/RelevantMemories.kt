@@ -116,7 +116,7 @@ object RelevantMemories {
         SearchDocs.EVENT -> "a moment"
         SearchDocs.LETTER -> "a letter"
         SearchDocs.CHAPTER -> "a chapter"
-        SearchDocs.NOTE -> "an older note"
+        SearchDocs.NOTE -> "an older note, set aside then"
         else -> kind
     }
 
@@ -160,11 +160,11 @@ object SearchDocs {
 
     /** Archived memory: retired notes, profile lines and strengths (never ones he deleted). */
     fun retiredNote(n: Note, zone: ZoneId): SearchDoc? = n.takeIf { it.status == Note.RETIRED }?.let {
-        SearchDoc(kind = NOTE, refId = "n${n.id}", day = ContextFormatter.date(n.lastSeen, zone).toString(), text = n.text)
+        SearchDoc(kind = NOTE, refId = "n${n.id}", day = ContextFormatter.date(n.validTo ?: n.lastSeen, zone).toString(), text = n.text)
     }
 
     fun retiredProfile(p: ProfileEntry, zone: ZoneId): SearchDoc? = p.takeIf { it.retired && !it.deletedByUser && it.value.isNotBlank() }?.let {
-        SearchDoc(kind = NOTE, refId = "p${p.key}", day = ContextFormatter.date(p.updatedAt, zone).toString(), text = "${p.key}: ${p.value}")
+        SearchDoc(kind = NOTE, refId = "p${p.key}", day = ContextFormatter.date(p.validTo ?: p.updatedAt, zone).toString(), text = "${p.key}: ${p.value}")
     }
 
     fun retiredStrength(s: Strength, zone: ZoneId): SearchDoc? = s.takeIf { it.retired && !it.deletedByUser }?.let {

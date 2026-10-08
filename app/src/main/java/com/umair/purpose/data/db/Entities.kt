@@ -213,6 +213,12 @@ data class ProfileEntry(
     val sourceSessionIds: String = "",
     /** UPDATE-15: over the core-profile cap, tidied into the archive: kept and searchable, not sent or shown. */
     val retired: Boolean = false,
+    /** Phase 2: when it was written down (0 = before this column existed; [updatedAt] stands in). */
+    val recordedAt: Long = 0,
+    /** Phase 2: when it started being true (0 = unknown). */
+    val validFrom: Long = 0,
+    /** Phase 2: when it stopped being true. Null = still true. Set when retired; the row is never deleted for it. */
+    val validTo: Long? = null,
 )
 
 @Serializable
@@ -246,7 +252,16 @@ data class Note(
     val editedByUser: Boolean = false,
     /** See [ProfileEntry.sourceSessionIds]. */
     val sourceSessionIds: String = "",
+    /** Phase 2: when it was written down (0 = before this column existed; [firstSeen] stands in). */
+    val recordedAt: Long = 0,
+    /** Phase 2: when it started being true (0 = unknown; [firstSeen] stands in). */
+    val validFrom: Long = 0,
+    /** Phase 2: when it stopped being true. Null = still true. Retiring closes this; it never deletes the note. */
+    val validTo: Long? = null,
 ) {
+    /** Closes the fact's validity (once) and archives it. The first close wins, so a later tidy-up never moves the date. */
+    fun retiredAt(at: Long) = copy(status = RETIRED, validTo = validTo ?: at)
+
     companion object {
         val TYPES = listOf("pattern", "thread", "what_helps", "what_doesnt")
         val CONFIDENCES = listOf("guess", "likely", "confirmed")

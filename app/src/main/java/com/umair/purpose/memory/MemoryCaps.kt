@@ -28,7 +28,9 @@ object MemoryCaps {
         !overflow(notes, strengths, profile).isEmpty
 
     /** What to archive so every cap holds. Pure: the caller applies it (as retired) in one transaction. */
-    fun overflow(notes: List<Note>, strengths: List<Strength>, profile: List<ProfileEntry>): Overflow {
+    fun overflow(
+        notes: List<Note>, strengths: List<Strength>, profile: List<ProfileEntry>, now: Long = System.currentTimeMillis(),
+    ): Overflow {
         val rank = mapOf("guess" to 0, "likely" to 1, "confirmed" to 2)
         val outNotes = NOTES.flatMap { (type, cap) ->
             val active = notes.filter { it.status == Note.ACTIVE && it.type == type }
@@ -39,7 +41,7 @@ object MemoryCaps {
             else active.filter { !it.editedByUser && it.confidence != "confirmed" }
                 .sortedWith(compareBy<Note> { rank[it.confidence] ?: 0 }.thenBy { it.lastSeen }.thenBy { it.timesSeen }.thenBy { it.id })
                 .take(excess)
-                .map { it.copy(status = Note.RETIRED) }
+                .map { it.retiredAt(now) }
         }
         val liveStrengths = strengths.filter { !it.deletedByUser && !it.retired }
         val outStrengths = (liveStrengths.size - STRENGTHS).takeIf { it > 0 }?.let { excess ->
@@ -49,7 +51,7 @@ object MemoryCaps {
         val liveProfile = profile.filter { !it.deletedByUser && !it.retired && it.value.isNotBlank() }
         val outProfile = (liveProfile.size - PROFILE).takeIf { it > 0 }?.let { excess ->
             liveProfile.filter { !Corrections.isProtected(it) }.sortedWith(compareBy<ProfileEntry> { it.updatedAt }.thenBy { it.key })
-                .take(excess).map { it.copy(retired = true) }
+                .take(excess).map { it.copy(retired = true, validTo = it.validTo ?: now) }
         }.orEmpty()
         return Overflow(outNotes, outStrengths, outProfile)
     }

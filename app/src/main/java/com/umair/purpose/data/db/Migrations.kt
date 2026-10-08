@@ -13,7 +13,7 @@ object Migrations {
     val ALL: Array<Migration> by lazy {
         arrayOf(
             MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-            MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10,
+            MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11,
         )
     }
 
@@ -26,6 +26,25 @@ object Migrations {
     private const val BAD_HIT = 0.014
     private const val BAD_MISS = 0.44
     private const val BAD_OUT = 1.32
+
+    /**
+     * Phase 2, bitemporal facts: when a note or profile line was recorded, when it started being true and when it
+     * stopped (null = still true). Existing rows are backfilled from what the app already knew: recorded and valid
+     * from when first seen, and a retired or resolved one stopped being true when it was last seen. Only adds.
+     */
+    val MIGRATION_10_11 = object : Migration(10, 11) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            for (table in listOf("note", "profile_entry")) {
+                db.execSQL("ALTER TABLE `$table` ADD COLUMN `recordedAt` INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE `$table` ADD COLUMN `validFrom` INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE `$table` ADD COLUMN `validTo` INTEGER")
+            }
+            db.execSQL("UPDATE `note` SET `recordedAt` = `firstSeen`, `validFrom` = `firstSeen`")
+            db.execSQL("UPDATE `note` SET `validTo` = `lastSeen` WHERE `status` IN ('retired', 'resolved')")
+            db.execSQL("UPDATE `profile_entry` SET `recordedAt` = `updatedAt`, `validFrom` = `updatedAt`")
+            db.execSQL("UPDATE `profile_entry` SET `validTo` = `updatedAt` WHERE `retired` = 1")
+        }
+    }
 
     /**
      * The Flash prices 8 → 9 wrote were wrong — 0.014 / 0.44 / 1.32 is a mangled copy of the pro row, and roughly

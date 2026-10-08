@@ -132,7 +132,7 @@ object Gardening {
                 lastSeen = group.maxOf { it.lastSeen },
                 sourceSessionIds = Provenance.merge(group.map { it.sourceSessionIds }),
             )
-            group.filter { it.id != keep.id }.forEach { out[it.id] = it.copy(status = Note.RETIRED) }
+            group.filter { it.id != keep.id }.forEach { out[it.id] = it.retiredAt(now) }
             used += group.map { it.id }
         }
         for (r in result.rewrite) {
@@ -145,7 +145,7 @@ object Gardening {
         for (r in result.retire) {
             val n = usable[r.id] ?: continue
             if (n.id in used) continue
-            out[n.id] = n.copy(status = Note.RETIRED)
+            out[n.id] = n.retiredAt(now)
             used += n.id
         }
 

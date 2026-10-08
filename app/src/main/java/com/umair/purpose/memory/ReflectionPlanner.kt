@@ -119,6 +119,10 @@ object ReflectionPlanner {
                 // A line the cap archived stays archived: reflection may update its words, but un-retiring it
                 // would push it back into the context block and What I know.
                 retired = existing?.retired ?: false,
+                // Same words = same fact, so it keeps when it was written and when it began; new words start a new span.
+                recordedAt = if (existing != null && existing.value == value) existing.recordedAt else now,
+                validFrom = if (existing != null && existing.value == value) existing.validFrom else now,
+                validTo = existing?.validTo,
             )
         }
         return out.values.toList()
@@ -176,7 +180,7 @@ object ReflectionPlanner {
             // him permanently — RESOLVED notes vanish from What I know and from the context, and the Archived
             // section only shows retired ones — so his own notes are never resolved this way.
             if (note.status == Note.ACTIVE && !note.editedByUser && note.confidence != "confirmed") {
-                changed[id] = note.copy(status = Note.RESOLVED, lastSeen = now)
+                changed[id] = note.copy(status = Note.RESOLVED, lastSeen = now, validTo = note.validTo ?: now)
             }
         }
 
@@ -192,6 +196,7 @@ object ReflectionPlanner {
             added += Note(
                 type = type, text = text, confidence = "guess", status = Note.ACTIVE,
                 timesSeen = 1, firstSeen = now, lastSeen = now, sourceSessionIds = Provenance.add("", sessionId),
+                recordedAt = now, validFrom = now,
             )
         }
         return changed.values.toList() + added

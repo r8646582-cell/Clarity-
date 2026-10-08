@@ -45,3 +45,9 @@ cannot be downloaded in this environment, so the two Kotlin edits above are unte
 - Added a manual "I did it" action on the Path screen as the stall fallback. It uses the same one-step-a-day rule as `advance_journey`, and the coach's next context line says today's step is done.
 - Still needs a device: defer day 1 and confirm it stays open, then do a real step and confirm the coach completes it.
 - Smoke test fix: the Android 35 emulator job failed with `adb: device offline` (no app crash in the log). `smoke.sh` now waits for the device and retries the "is it running" check.
+
+## Phase 2 (continued): bitemporal facts and hybrid-retrieval building blocks
+- DB 10 → 11 (`MIGRATION_10_11`, `MigrationTest`): `note` and `profile_entry` gain `recordedAt`, `validFrom`, `validTo` (null = still true). Backfilled from `firstSeen`/`updatedAt`; retired or resolved rows get `validTo` = when last seen. Only adds.
+- Retiring now closes `validTo` and never deletes (`Note.retiredAt`, used by gardening, caps, duplicate cleanup, replacement and reflection's resolve). The first close wins. Archive search lines for set-aside notes are dated by `validTo` ("an older note, set aside then").
+- `memory/HybridRetrieval.kt`: reciprocal rank fusion, recency/evidence rerank, cosine, nearest and duplicate flagging, plus an `Embedder` interface. Pure, tested, and nothing writes memory text or confidence from it.
+- NOT done: no embedding model is bundled or wired in (model choice, size and licence still to check), so retrieval is still FTS-only in the app and the memory exam score is unchanged. A changed profile value still overwrites the old one (the old value is not kept as history yet). `schemas/11.json` was written by hand; the first Gradle build regenerates it with the real identity hash, so commit that file. Nothing here was compiled by Gradle (no Android SDK in this environment); CI is the check.

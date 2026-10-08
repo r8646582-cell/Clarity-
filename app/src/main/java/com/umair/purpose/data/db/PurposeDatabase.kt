@@ -17,7 +17,7 @@ import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
         // UPDATE-15 to 18
         Chapter::class, Milestone::class, Branch::class, JourneyAdjustment::class, UsageMonth::class, SearchDoc::class,
     ],
-    version = 10,
+    version = 11,
     exportSchema = true,
 )
 abstract class PurposeDatabase : RoomDatabase() {
