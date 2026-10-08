@@ -22,10 +22,10 @@ class EmbeddingMathTest {
 
     @Test
     fun `pooling averages tokens and gives unit length`() {
-        val out = OnnxEmbedder.meanPoolAndNormalize(arrayOf(floatArrayOf(3f, 0f), floatArrayOf(3f, 4f)))
+        val out = OnnxEmbedder.meanPoolAndNormalize(arrayOf(floatArrayOf(3f, 0f), floatArrayOf(3f, 8f)))
         assertEquals(1.0, Math.sqrt(out.sumOf { (it * it).toDouble() }), 1e-6)
-        assertEquals(0.8f, out[0], 1e-6f)
-        assertEquals(0.6f, out[1], 1e-6f)
+        assertEquals(0.6f, out[0], 1e-6f)
+        assertEquals(0.8f, out[1], 1e-6f)
     }
 
     private fun hit(ref: String, text: String, day: String = "2026-01-01") = SearchHit("summary", ref, day, text)
