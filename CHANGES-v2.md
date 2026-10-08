@@ -102,3 +102,19 @@ Same caveat as before: no Android SDK here. The pure logic (`ai/JobModels`, `cos
 - **"Use the strongest available"** is a button, never applied silently: the backup deep model when the backup is Anthropic, otherwise the main deep model.
 
 **Not done, and why the default did not change:** the blueprint says to confirm with the Phase 1 scoreboard before making a stronger model the default. That needs a model API key, which this session does not have, so no comparison was run or recorded and the default stays "same as before". `tools/eval/README.md` has the exact commands. The scoreboard also scores the coach's replies, not reflection or letter quality directly, so even a run is only a proxy.
+
+# Phase 6: housekeeping, then a bug hunt over the whole repo
+CI was red on every commit since Phase 3, so this phase started by making the build and the unit tests pass, using the CI logs as the compiler (no Android SDK here).
+
+## Phase 6 as specified
+- **PBKDF2 iterations 210,000 → 600,000** (OWASP's current figure for PBKDF2-HMAC-SHA256). The count is written in every backup's header and authenticated with the file, so the migration path needs no flag day: old backups still restore at their own count, new ones use 600,000. Tests: the default is stored in the header; a file written at 210,000 still decodes. The SQLCipher passphrase is 32 random bytes in the Keystore, not derived from anything he types, so it has no iteration count to raise.
+- **Doc drift:** README, CLAUDE.md (a "Blueprint V3 additions" section; `next_opening` removed from the reflection example) and DESIGN.md (the Settings order) now match the code. UPDATE-*.md and docs/* are left as history.
+- **Offline prompt tuning:** not done. It needs a model API key for the Phase 1 scoreboard, which this session does not have, and the blueprint makes it optional.
+
+## Bugs found and fixed
+- **Build break (Phase 3):** a Room query joined `session.offTheRecord`, a column that does not exist (off-the-record sessions are never stored). KSP failed, so nothing after it had compiled since Phase 3. The condition is gone.
+- **Schema files:** `13.json`, `14.json`, `15.json` were hand-made from `12.json` and missed the three ledger tables (`disagreement`, `contradiction`, `action_log`), so five MigrationTest cases failed. Rebuilt with the three tables. Two Phase 3/4 migration tests also inserted a promise without its NOT NULL `offTheRecord` column.
+- **Screen time (Phase 4):** on Android 11+ an app cannot look up other apps' info without declaring them, so every app would have been filed under "other" and the categories would have been empty. The manifest now declares launcher apps in `<queries>`. The usage-access check also accepts the `MODE_DEFAULT` answer some Android versions give while the permission is granted.
+- **Growth tree and record counts:** off-the-record promises (whose words are not remembered) were counted in the growth evidence, so their text could reach the milestone prompt, and in "kept N of M". Both now skip them, as the ledgers already did.
+- **Erase everything:** left the embedding vectors made from his words in the database until a later sync, and wiped the per-job model choices although Erase keeps settings. Vectors are cleared; model choices stay.
+- **Replies:** a finished reply that ended in `<` lost that character (it is only hidden while streaming); a stream chunk with `"error": null` was treated as a provider error.
